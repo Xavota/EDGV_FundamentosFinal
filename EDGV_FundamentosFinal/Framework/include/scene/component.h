@@ -1,0 +1,102 @@
+#pragma once
+
+#include "platform/defines.h"
+#include "platform/stdHeaders.h"
+
+class Actor;
+
+/**
+ * @brief Types of components.
+ */
+namespace eCOMPONENT_TYPE {
+  enum E : U8
+  {
+    kNone = 0,
+    kTransform,
+    kRender,
+    kShapeRect,
+    kShapeCircle,
+  };
+}
+
+class Component
+{
+ public:
+  /**
+   * @brief The enum for identifying the component type. An alternative to rtti.
+   */
+  enum { CmpType = eCOMPONENT_TYPE::kNone };
+
+  /**
+   * @brief  Default constructor
+   */
+  Component() = default;
+  /**
+   * @brief  Default destructor
+   */
+  ~Component() = default;
+
+  /**
+   * @brief   Returns the component type.
+   * @return  The component type.
+   */
+  FORCEINLINE virtual U8 getType() const
+  {
+    return CmpType;
+  }
+
+  /**
+   * @brief  Updates the everything the component needs.
+   */
+  virtual void update() {}
+
+  /**
+   * @brief   Returns true if the component is active and can update.
+   * @return  If the component is active.
+   */
+  FORCEINLINE virtual bool getActive() const
+  {
+    return m_bActive;
+  }
+  /**
+   * @brief  Set if the actor can update and do stuff.
+   * @param    active If the actor can update and do stuff.
+   */
+  FORCEINLINE virtual void setActive(const bool active)
+  {
+    m_bActive = active;
+  }
+
+  /**
+   * @brief   Returns the actor to witch the component is attached.
+   * @return  The actor to witch the component is attached.
+   */
+  FORCEINLINE virtual WPtr<Actor> getActor() const
+  {
+    return m_pActor;
+  }
+
+ protected:
+  /**
+   * @brief The actor to witch it's attached.
+   */
+  WPtr<Actor> m_pActor;
+ 
+  /**
+   * @brief If the actor can update and do stuff.
+   */
+  bool m_bActive = true;
+
+ private:
+  friend class Actor;
+
+  /**
+   * @brief  Initializes all the things in the component and tells it the actor attached
+   *         to.
+   * @param    act  The actor attached to.
+   */
+  void init(const WPtr<Actor> act)
+  {
+    m_pActor = act;
+  }
+};
