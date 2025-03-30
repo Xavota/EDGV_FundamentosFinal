@@ -1,13 +1,9 @@
 #include "frameworkManager.h"
 
-#include "tools/input.h"
-#include "tools/time.h"
+#include "tools/globals.h"
 
-#include "scene/actor.h"
-#include "scene/components/transform.h"
-#include "scene/components/render.h"
-#include "scene/components/shapeCircle.h"
-#include "scene/components/shapeRect.h"
+#include "scene/sceneManager.h"
+#include "scene/scene.h"
 
 void FrameworkManager::run(const sf::Vector2u& size, const String& name,
                            const bool windowed)
@@ -52,18 +48,13 @@ void FrameworkManager::init(const sf::Vector2u& size, const String& name,
   initGameWindow(size, name, windowed);
 
   gl::Time::startUp();
+  gl::TextureManager::startUp();
+  gl::FontManager::startUp();
+  SceneManager::startUp();
+
+  SceneManager::instance().init();
 
   onInit();
-
-  /// TEMPS
-  m_scene.init();
-
-  SPtr<Actor> actorTest1 = m_scene.addActor("Test1").lock();
-  SPtr<Render> renderTest1 = actorTest1->addComponent<Render>().lock();
-  renderTest1->m_material.m_color = sf::Color::Blue;
-  actorTest1->addComponent<ShapeRect>();
-  //SPtr<Transform> transformTest1 = actorTest1->getTransform().lock();
-  //transformTest1->setPosition({2.0f, 2.0f});
 }
 
 void FrameworkManager::processEvents()
@@ -85,26 +76,22 @@ void FrameworkManager::processEvents()
     else if (event->is<sf::Event::Closed>()) {
       m_window.close();
     }
-    else {
-      
-    }
+    else {}
   }
 }
 
 void FrameworkManager::update() {
-  onUpdate();
+  SceneManager::instance().update();
 
-  /// TEMPS
-  m_scene.update();
+  onUpdate();
 }
 
 void FrameworkManager::render() {
   m_window.clear();
 
-  onRender();
+  SceneManager::instance().render(&m_window);
 
-  /// TEMPS
-  m_scene.render(&m_window);
+  onRender();
 
   m_window.display();
 }
@@ -112,5 +99,10 @@ void FrameworkManager::render() {
 void FrameworkManager::destroy() {
   onDestroy();
 
-  m_scene.destroy();
+  SceneManager::instance().destroy();
+
+  SceneManager::shutDown();
+  gl::FontManager::shutDown();
+  gl::TextureManager::shutDown();
+  gl::Time::shutDown();
 }

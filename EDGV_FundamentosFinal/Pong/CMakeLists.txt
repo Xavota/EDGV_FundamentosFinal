@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.28)
 
-add_executable(Pong src/main.cpp)
+add_executable(Pong
+ src/main.cpp
+ src/pongFramework.cpp
+ src/scripts/movementScript.cpp
+)
 
 set_target_properties(Pong PROPERTIES
  CXX_STANDARD 20

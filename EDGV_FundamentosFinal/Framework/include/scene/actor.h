@@ -6,6 +6,8 @@
 #include "platform/stdHeaders.h"
 #include "platform/memoryManager.hpp"
 
+#include "resources/collider.h"
+
 class Transform;
 class Scene;
 
@@ -61,7 +63,7 @@ class Actor : public EnableSPtrFromThis<Actor> {
    * @param    active: The new state of the actor. True if it's active.
    * @bug    No know Bugs
    */
-  FORCEINLINE void setActive(const bool active) { m_bActive = active; }
+  void setActive(const bool active);
 
   /**
    * @brief   Returns the transform component of the actor. To easy access.
@@ -90,11 +92,19 @@ class Actor : public EnableSPtrFromThis<Actor> {
  private:
   /**
    * @brief  Initializes the actor, giving a name.
-   * @param   name:          The name of the actor
-   * @param   sceneHasIndex: The has index the actor has on the scene
+   * @param   name           The name of the actor. This need NOT to be unqiue,
+   *                         since the [sceneHashIndex] will be used to create a
+   *                         unique name.
+   * @param   sceneHasIndex  The has index the actor has on the scene
    * @bug    No know Bugs
    */
-  void init(const String& name, int sceneHasIndex);
+  void init(const String& name, int sceneHashIndex);
+
+  /**
+   * @brief  Start the lifetime of this actor.
+   * @bug    No know Bugs
+   */
+  void start();
 
   /**
    * @brief  Updates the actor and all of it components.
@@ -108,6 +118,51 @@ class Actor : public EnableSPtrFromThis<Actor> {
    */
   void destroy();
 
+  /**
+   * @brief  If this actor has a collider component active and it hits or gets
+   *         hit (no real difference for this case) by another collider, call
+   *         this function to notify the actor of this hit event with the
+   *         information of the collision point, normal and a reference to the
+   *         other actor involved in this collision.
+   * @param    info  The hit information. This has the point in space where the
+   *                 collision occured, the normal vector of the other actor's
+   *                 collider surface and a reference to the other actor
+   *                 involved in the collision.
+   * @bug    No know Bugs
+   */
+  void onHit(HitInfo info) const;
+
+  /**
+   * @brief  If this actor has a collider component active and it starts
+   *         colliding with another collider, call this function to notify the
+   *         actor that a collision started with a reference to the other actor
+   *         involved in this collision.
+   * @param    info  The collision information. This has a reference to the
+   *           other actor involved in the collision.
+   * @bug    No know Bugs
+   */
+  void onCollisionEnter(CollisionInfo info) const;
+  /**
+   * @brief  If this actor has a collider component active and it is colliding
+   *         with another collider, call this function each frame the collision
+   *         is happening to notify the actor that is colliding, with a
+   *         reference to the other actor involved in this collision.
+   * @param    info  The collision information. This has a reference to the
+   *           other actor involved in the collision.
+   * @bug    No know Bugs
+   */
+  void onCollisionStay(CollisionInfo info) const;
+  /**
+   * @brief  If this actor has a collider component active and it was colliding
+   *         with another collider las frame but now it isn't, call this
+   *         function to notify the actor that the collision ended, with a
+   *         reference to the other actor involved in this collision.
+   * @param    info  The collision information. This has a reference to the
+   *           other actor involved in the collision.
+   * @bug    No know Bugs
+   */
+  void onCollisionExit(CollisionInfo info) const;
+
  private:
   friend class Scene;
 
@@ -119,6 +174,10 @@ class Actor : public EnableSPtrFromThis<Actor> {
    * @brief If the actor is active or not.
    */
   bool m_bActive = true;
+  /**
+   * @brief If this actor has started its lifetime.
+   */
+   bool m_bIsStarted;
 
   /**
    * @brief The list of components.
@@ -160,6 +219,11 @@ FORCEINLINE WPtr<T> Actor::getComponent() const
   SIZE compCount = m_vComponents.size();
   for (U32 i = 0; i != compCount; ++i) {
     if (m_vComponents[i]->getType() == T::CmpType) {
+      if (T::CmpType == eCOMPONENT_TYPE::kScript) {
+        SPtr<T> compCast = MemoryManager::sharedDynamicCast<T>(m_vComponents[i]);
+        if (compCast) return compCast;
+        continue;
+      }
       return MemoryManager::sharedReinterpretCast<T>(m_vComponents[i]);
     }
   }

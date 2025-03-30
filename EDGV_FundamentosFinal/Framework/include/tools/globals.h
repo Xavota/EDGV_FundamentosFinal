@@ -1,6 +1,5 @@
 #pragma once
-#include "tools/texture.h"
-#include "tools/font.h"
-#include "tools/time.h"
+#include "tools/fontManager.h"
 #include "tools/input.h"
-#include "tools/math.h"
+#include "tools/textureManager.h"
+#include "tools/time.h"

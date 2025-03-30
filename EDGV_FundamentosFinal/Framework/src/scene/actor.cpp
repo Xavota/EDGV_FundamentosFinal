@@ -5,11 +5,23 @@
 #include "platform/memoryManager.hpp"
 
 #include "scene/components/transform.h"
+#include "scene/components/script.h"
 
-void Actor::init(const String& name, int sceneHasIndex)
+void Actor::setActive(const bool active)
 {
+  m_bActive = active;
+
+  if (m_bActive && !m_bIsStarted) {
+    start();
+  }
+}
+
+void Actor::init(const String& name, int sceneHashIndex)
+{
+  m_bIsStarted = false;
+
   m_sName = name;
-  m_iSceneHashIndex = sceneHasIndex;
+  m_iSceneHashIndex = sceneHashIndex;
   if (getTransform().expired()) {
     SIZE cmpIndex = m_vComponents.size();
     m_vComponents.push_back(MemoryManager::createShared<Transform>());
@@ -17,11 +29,23 @@ void Actor::init(const String& name, int sceneHasIndex)
   }
 }
 
+void Actor::start() {
+  m_bIsStarted = true;
+
+  for (auto& cmp : m_vComponents) {
+    if (cmp->getType() == eCOMPONENT_TYPE::kScript && cmp->getActive())
+      MemoryManager::sharedReinterpretCast<Script>(cmp)->start();
+  }
+}
+
 void Actor::update()
 {
+  if (!m_bIsStarted) return;
+
   for (auto& cmp : m_vComponents) {
-    if (cmp->getActive())
+    if (cmp->getActive()){
       cmp->update();
+    }
   }
 }
 
@@ -39,4 +63,33 @@ bool Actor::isActive() const
 void Actor::destroy()
 {
   m_vComponents.clear();
+  m_bIsStarted = false;
+}
+
+void Actor::onHit(HitInfo info) const {
+  for (auto& cmp : m_vComponents) {
+    if (cmp->getType() == eCOMPONENT_TYPE::kScript && cmp->getActive())
+      MemoryManager::sharedReinterpretCast<Script>(cmp)->onHit(info);
+  }
+}
+
+void Actor::onCollisionEnter(CollisionInfo info) const {
+  for (auto& cmp : m_vComponents) {
+    if (cmp->getType() == eCOMPONENT_TYPE::kScript && cmp->getActive())
+      MemoryManager::sharedReinterpretCast<Script>(cmp)->onCollisionEnter(info);
+  }
+}
+
+void Actor::onCollisionStay(CollisionInfo info) const {
+  for (auto& cmp : m_vComponents) {
+    if (cmp->getType() == eCOMPONENT_TYPE::kScript && cmp->getActive())
+      MemoryManager::sharedReinterpretCast<Script>(cmp)->onCollisionStay(info);
+  }
+}
+
+void Actor::onCollisionExit(CollisionInfo info) const {
+  for (auto& cmp : m_vComponents) {
+    if (cmp->getType() == eCOMPONENT_TYPE::kScript && cmp->getActive())
+      MemoryManager::sharedReinterpretCast<Script>(cmp)->onCollisionExit(info);
+  }
 }

@@ -4,6 +4,7 @@
 #include "platform/stdHeaders.h"
 
 class Actor;
+class Transform;
 
 /**
  * @brief Types of components.
@@ -16,6 +17,10 @@ namespace eCOMPONENT_TYPE {
     kRender,
     kShapeRect,
     kShapeCircle,
+    kCollision,
+    kCircleCollision,
+    kRectCollision,
+    kScript,
   };
 }
 
@@ -34,7 +39,7 @@ class Component
   /**
    * @brief  Default destructor
    */
-  ~Component() = default;
+  virtual ~Component() = default;
 
   /**
    * @brief   Returns the component type.
@@ -75,6 +80,13 @@ class Component
   {
     return m_pActor;
   }
+
+  /**
+   * @brief   A shortcut for getting the transform component of the actor that
+   *          owns this component.
+   * @return  The transform component of the actor that owns this component.
+   */
+  WPtr<Transform> getTransform() const;
 
  protected:
   /**

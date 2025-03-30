@@ -3,15 +3,17 @@ project(Framework LANGUAGES CXX)
 
 add_library(Framework STATIC
   src/frameworkManager.cpp
+  src/platform/iofile.cpp
+  src/platform/math.cpp
   src/platform/math/matrix3.cpp
   src/scene/actor.cpp
+  src/scene/component.cpp
   src/scene/scene.cpp
   src/scene/sceneManager.cpp
   src/scene/components/transform.cpp
-  src/tools/font.cpp
+  src/tools/fontManager.cpp
   src/tools/input.cpp
-  src/tools/math.cpp
-  src/tools/texture.cpp
+  src/tools/textureManager.cpp
   src/tools/time.cpp
 )
 

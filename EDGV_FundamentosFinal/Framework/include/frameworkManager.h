@@ -5,19 +5,16 @@
 #include "platform/stdHeaders.h"
 #include "platform/module.hpp"
 
-/// TEMPS
-#include "scene/scene.h"
-
 class FrameworkManager : public Module<FrameworkManager> {
  public:
- /**
-  * @brief  Default constructor
-  */
- FrameworkManager() = default;
+  /**
+   * @brief  Default constructor
+   */
+  FrameworkManager() = default;
   /**
    * @brief  Default destructor
    */
-  ~FrameworkManager() = default;
+  virtual ~FrameworkManager() = default;
 
   /**
    * @brief  Start the game loop of the framework. This initiates, updates,
@@ -103,8 +100,4 @@ class FrameworkManager : public Module<FrameworkManager> {
    * @brief  The fixed time that each logical frame has in between.
    */
   sf::Time m_timePerFrame = sf::seconds(1.f / 60.f);
-
-
-  /// TEMPS
-  Scene m_scene;
 };

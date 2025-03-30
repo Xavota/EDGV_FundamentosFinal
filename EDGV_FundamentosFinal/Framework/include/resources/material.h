@@ -1,6 +1,6 @@
 #pragma once
 
-#include "tools/texture.h"
+#include "tools/textureManager.h"
 
 //class Material {
 // public:

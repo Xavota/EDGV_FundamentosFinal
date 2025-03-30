@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <fstream>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -18,14 +19,18 @@ using U16 = std::uint16_t;
 using U32 = std::uint32_t;
 using U64 = std::uint64_t;
 
+using Byte = U8;
 using SIZE = std::size_t;
 
 
 using String = std::string;
+using WString = std::wstring;
 template<typename T, typename A = std::allocator<T>>
 using Vector = std::vector<T, A>;
 template<typename T, typename U>
 using Map = std::map<T, U>;
+template<typename T, typename U>
+using Pair = std::pair<T, U>;
 
 template<typename T>
 using UPtr = std::unique_ptr<T>;
@@ -38,3 +43,7 @@ using WPtr = std::weak_ptr<T>;
  */
 template<typename T>
 using EnableSPtrFromThis = std::enable_shared_from_this<T>;
+
+using FStream = std::fstream;
+using IFStream = std::ifstream;
+using OFStream = std::ofstream;
