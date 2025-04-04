@@ -30,12 +30,12 @@ void MovementScript::update()
   transform->setPosition(newPos);
 }
 
-void MovementScript::onCollisionEnter(CollisionInfo info) const
+void MovementScript::onCollisionEnter(CollisionInfo info)
 {
   std::cout << "Enter collision with: " << info.otherActor.lock()->getName() << std::endl;
 }
 
-void MovementScript::onCollisionExit(CollisionInfo info) const
+void MovementScript::onCollisionExit(CollisionInfo info)
 {
   std::cout << "Exit collision with: " << info.otherActor.lock()->getName() << std::endl;
 }

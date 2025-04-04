@@ -70,6 +70,14 @@ class SceneManager : public Module<SceneManager> {
     */
    void destroy();
 
+ public:
+  /**
+   * @brief If the scene manager is on debug mode. If it is initialized of debug
+   *        mode, debug information will be render on the scene, like the unit
+   *        grid to show the unit size.
+   */
+  bool m_bDebug = false;
+
  private:
   friend class FrameworkManager;
 

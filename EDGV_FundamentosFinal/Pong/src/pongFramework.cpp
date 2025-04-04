@@ -1,22 +1,41 @@
 #include "pongFramework.h"
 
+#include <platform/iofile.h>
+
 #include <scene/sceneManager.h>
 #include <scene/scene.h>
 #include <scene/actor.h>
-#include <scene/components/transform.h>
-#include <scene/components/render.h>
-#include <scene/components/shapeCircle.h>
-#include <scene/components/shapeRect.h>
-#include <scene/components/rectCollider.h>
-#include <scene/components/circleCollider.h>
-#include "scripts/movementScript.h"
+
+#include <tools/textureManager.h>
+
+#include "scripts/gameManager.h"
 
 
 void PongFramework::onInit()
 {
+  auto& textureMan = gl::TextureManager::instance();
+
+  Vector<Path> paths =
+   File::getChildPaths(L"../Pong/resources/sprites/", true);
+  for (const auto& p : paths) {
+    String textureName =
+     std::filesystem::relative(p, "../Pong/resources/sprites/").generic_string();
+    std::replace(textureName.begin(), textureName.end(), '/', '_');
+    textureName = textureName.substr(0, textureName.size() - 4);
+
+    std::cout << textureName << std::endl;
+
+    textureMan.addTexture(textureName, p.generic_string(), sf::Color::Black);
+  }
+
+  SceneManager::instance().m_bDebug = false;
   SPtr<Scene> testScene = SceneManager::instance().addScene("TestScene").lock();
 
-  SPtr<Actor> testActor = testScene->addActor("TestActor").lock();
+  SPtr<Actor> gameManager = testScene->addActor("GameManager").lock();
+  gameManager->addComponent<GameManager>();
+
+
+  /*SPtr<Actor> testActor = testScene->addActor("TestActor").lock();
   testActor->addComponent<ShapeCircle>();
   //testActor->addComponent<ShapeRect>();
   SPtr<Render> testActorRender = testActor->addComponent<Render>().lock();
@@ -55,7 +74,7 @@ void PongFramework::onInit()
   //testActor3Coll->offset = {2.0f, 3.0f};
   testActor3Coll->scale = {4.0f, 4.0f};
   testActor3Coll->render = true;
-  testActor3Coll->setActive(false);
+  testActor3Coll->setActive(false);*/
 
   SceneManager::instance().openScene("TestScene");
 }

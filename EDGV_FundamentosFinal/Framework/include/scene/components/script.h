@@ -53,7 +53,7 @@ class Script : public Component {
    *                 involved in the collision.
    * @bug    No know Bugs
    */
-  virtual void onHit(HitInfo info) const {}
+  virtual void onHit(HitInfo info) {}
 
   /**
    * @brief  If this script is on an actor that has a collider component active
@@ -64,7 +64,7 @@ class Script : public Component {
    *                 other actor involved in the collision.
    * @bug    No know Bugs
    */
-  virtual void onCollisionEnter(CollisionInfo info) const {}
+  virtual void onCollisionEnter(CollisionInfo info) {}
   /**
    * @brief  If this script is on an actor that has a collider component active
    *         and it is colliding with another collider, call this function each
@@ -75,7 +75,7 @@ class Script : public Component {
    *                 other actor involved in the collision.
    * @bug    No know Bugs
    */
-  virtual void onCollisionStay(CollisionInfo info) const {}
+  virtual void onCollisionStay(CollisionInfo info) {}
   /**
    * @brief  If this script is on an actor that has a collider component active
    *         and it was colliding with another collider las frame but now it
@@ -86,5 +86,5 @@ class Script : public Component {
    *                 other actor involved in the collision.
    * @bug    No know Bugs
    */
-  virtual void onCollisionExit(CollisionInfo info) const {}
+  virtual void onCollisionExit(CollisionInfo info) {}
 };

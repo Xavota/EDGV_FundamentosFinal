@@ -12,6 +12,7 @@ WPtr<Scene> SceneManager::addScene(const String& name)
 
   m_mScenes[name] = MemoryManager::createShared<Scene>();
   m_mScenes[name]->init();
+  m_mScenes[name]->m_bRenderDebugGrid = m_bDebug;
 
   return m_mScenes[name];
 }

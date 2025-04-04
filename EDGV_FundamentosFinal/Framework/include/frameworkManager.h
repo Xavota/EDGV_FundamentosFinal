@@ -90,7 +90,7 @@ class FrameworkManager : public Module<FrameworkManager> {
    */
   void destroy();
 
- private:
+ protected:
   /**
    * @brief  The game window where everything will be displayed and captures
    *         the game events.

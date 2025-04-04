@@ -58,6 +58,12 @@ class File
    * @return If the file is successfully opened.
    */
   bool isOpen() const;
+  /**
+   * @brief  Returns true if the file pointer is at the end of the file, so
+   *         there are no more bytes or chars to be read.
+   * @return If the file pointer is at the end of the file.
+   */
+  bool isAtEnd() const;
 
 
   /**
@@ -105,6 +111,18 @@ class File
    */
   char
   getNextChar();
+
+  /**
+   * @brief  Check the given path for any file or directory inside and return
+   *         all of their paths in a list.
+   * @param    path       The path to get the children paths from.
+   * @param    recursive  If this is true, the function will enter any directory
+   *                      in the path and return all the files inside them,
+   *                      instead of returning the paths of the directories
+   *                      itself.
+   * @return The paths inside the given path.
+   */
+  static Vector<Path> getChildPaths(const WString& path, bool recursive = false);
 
  private:
   /**

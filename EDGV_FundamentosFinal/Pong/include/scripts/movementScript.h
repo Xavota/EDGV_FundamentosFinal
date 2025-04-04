@@ -17,8 +17,8 @@ class MovementScript : public Script
  private:
   void update() override;
 
-  void onCollisionEnter(CollisionInfo info) const override;
-  void onCollisionExit(CollisionInfo info) const override;
+  void onCollisionEnter(CollisionInfo info) override;
+  void onCollisionExit(CollisionInfo info) override;
 
  float m_fSpeed = 5.0f;
 };

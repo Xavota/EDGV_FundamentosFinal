@@ -1,5 +1,7 @@
 #include "platform/math/matrix3.h"
 
+#include "platform/stdHeaders.h"
+
 sf::Vector2f Matrix3::transform(const sf::Vector2f& point) const
 {
   return {
@@ -28,5 +30,32 @@ Matrix3 Matrix3::mul(const Matrix3& other) const
 /// TODO: IMPLEMENTAR ESTA FUNCIÓN.
 Matrix3 Matrix3::getInverse() const
 {
-  return Matrix3();
+  Matrix3 inv = {};
+  
+  // Compute the determinant
+  double det = m_00 * (m_11 * m_22 - m_12 * m_21) -
+               m_01 * (m_10 * m_22 - m_12 * m_20) +
+               m_02 * (m_10 * m_21 - m_11 * m_20);
+
+  if (det == 0.0) {
+    std::cout << "Wrong matrix for inverse. Determinant = 0." << std::endl;
+    return {};
+  }
+
+  double invDet = 1.0 / det;
+
+  // Compute the inverse
+  inv.m_00 =  (m_11 * m_22 - m_12 * m_21) * invDet;
+  inv.m_01 = -(m_01 * m_22 - m_02 * m_21) * invDet;
+  inv.m_02 =  (m_01 * m_12 - m_02 * m_11) * invDet;
+
+  inv.m_10 = -(m_10 * m_22 - m_12 * m_20) * invDet;
+  inv.m_11 =  (m_00 * m_22 - m_02 * m_20) * invDet;
+  inv.m_12 = -(m_00 * m_12 - m_02 * m_10) * invDet;
+
+  inv.m_20 =  (m_10 * m_21 - m_11 * m_20) * invDet;
+  inv.m_21 = -(m_00 * m_21 - m_01 * m_20) * invDet;
+  inv.m_22 =  (m_00 * m_11 - m_01 * m_10) * invDet;
+
+  return inv;
 }

@@ -8,7 +8,8 @@
 
 #include "resources/collider.h"
 
-class Transform;
+#include "scene/components/transform.h"
+
 class Scene;
 
 class Actor : public EnableSPtrFromThis<Actor> {
@@ -83,8 +84,9 @@ class Actor : public EnableSPtrFromThis<Actor> {
   FORCEINLINE const String& getName() const { return m_sName; }
 
   /**
-   * @brief   Returns the scene reference this actor is in.
-   * @return  The scene reference this actor is in.
+   * @brief   Getter for a reference to the scene this actor is on. Usually for
+   *          using in a script to add more actors on the same scene.
+   * @return  The scene this actor is on.
    * @bug     No know Bugs
    */
   FORCEINLINE WPtr<Scene> getScene() const { return m_pScene; }

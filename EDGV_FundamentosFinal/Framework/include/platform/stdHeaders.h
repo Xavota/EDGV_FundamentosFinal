@@ -2,11 +2,13 @@
 
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 #include <cstdint>
 #include <string>
 #include <vector>
 #include <map>
 #include <memory>
+#include <random>
 
 
 using I8 = std::int8_t;
@@ -47,3 +49,5 @@ using EnableSPtrFromThis = std::enable_shared_from_this<T>;
 using FStream = std::fstream;
 using IFStream = std::ifstream;
 using OFStream = std::ofstream;
+
+using Path = std::filesystem::path;

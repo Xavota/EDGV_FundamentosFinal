@@ -11,7 +11,7 @@ class Actor;
 class RectCollider;
 class CircleCollider;
 
-class Scene {
+class Scene : public EnableSPtrFromThis<Scene> {
  public: 
   /**
    * @brief Default constructor.
@@ -128,5 +128,16 @@ class Scene {
  /**
   * @brief The size in pixels a meter is in this scene.
   */
-  float m_fPixelToMeterSize = 25.0f;
+  float m_fPixelToMeterSize = 24.0f;
+
+  /**
+   * @brief If the scene should render its debug grid, to show the unit size.
+   */
+   bool m_bRenderDebugGrid;
+
+  /**
+   * @brief A list of the names of the actor that are queue to be deleted this
+   *        frame.
+   */
+  Vector<String> m_vPendingDelete;
 };

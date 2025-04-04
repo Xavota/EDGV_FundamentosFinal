@@ -4,7 +4,7 @@
 
 int main() {
   FrameworkManager::startUp<PongFramework>();
-  FrameworkManager::instance().run({1024, 1024}, "Pong", true);
+  FrameworkManager::instance().run({672, 888}, "Pong", true);
 
   return 0;
 }

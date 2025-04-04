@@ -3,6 +3,7 @@
 #include "platform/defines.h"
 #include "platform/stdHeaders.h"
 
+class Scene;
 class Actor;
 class Transform;
 
@@ -87,6 +88,14 @@ class Component
    * @return  The transform component of the actor that owns this component.
    */
   WPtr<Transform> getTransform() const;
+
+  /**
+   * @brief   A short cut for getting the scene the actor that owns this
+   *          component is on.
+   * @return  The scene this actor is on.
+   * @bug     No know Bugs
+   */
+  WPtr<Scene> getScene() const;
 
  protected:
   /**

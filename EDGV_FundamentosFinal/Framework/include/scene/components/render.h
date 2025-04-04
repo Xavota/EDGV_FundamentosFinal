@@ -36,7 +36,7 @@ class Render : public Component
    */
   Material m_material;
   /**
-   * @brief And index for render priority. Higher index means it renders later,
+   * @brief An index for render priority. Higher index means it renders later,
    *        so it shows in front of renders with lower index.
    */
   int m_iRenderIndex;

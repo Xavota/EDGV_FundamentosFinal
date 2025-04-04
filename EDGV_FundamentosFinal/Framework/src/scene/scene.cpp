@@ -20,6 +20,11 @@ WPtr<Actor> Scene::addActor(const String& name)
 
   m_mActors[newName] = MemoryManager::createUnique<Actor>();
   m_mActors[newName]->init(internalName, m_iActorsHashIndex);
+  m_mActors[newName]->m_pScene = shared_from_this();
+
+  if (m_bIsActive) {
+    m_mActors[newName]->start();
+  }
 
   ++m_iActorsHashIndex;
 
@@ -47,11 +52,10 @@ void Scene::destroyActor(const WPtr<Actor> actor)
 
   auto actorFound = m_mActors.find(actorName);
   if (actorFound != m_mActors.end()) {
-    actorFound->second->destroy();
-    m_mActors.erase(actorFound);
+    m_vPendingDelete.push_back(actorName);
   }
 
-  // Log and error that the actor was not found on this scene.
+  // Log an error that the actor was not found on this scene.
 }
 
 
@@ -89,6 +93,17 @@ void Scene::update()
 
     actor.second->update();
   }
+
+  
+  // Delete pending delete actors
+  for (const String& a : m_vPendingDelete) {
+    auto actorFound = m_mActors.find(a);
+    if (actorFound != m_mActors.end()) {
+      actorFound->second->destroy();
+      m_mActors.erase(actorFound);
+    }
+  }
+  m_vPendingDelete.clear();
 }
 
 void Scene::render(sf::RenderWindow* window) const
@@ -99,16 +114,18 @@ void Scene::render(sf::RenderWindow* window) const
   sf::CircleShape circleShape;
 
   // Render grid
-  rectangleShape.setSize({1.0f, 1024.0f});
-  rectangleShape.setFillColor(sf::Color(50, 50, 50));
-  for (int i = 0; i < 100; ++i) {
-    rectangleShape.setPosition({m_fPixelToMeterSize * i, 0.0f});
-    window->draw(rectangleShape);
-  }
-  rectangleShape.setSize({1024.0f, 1.0f});
-  for (int i = 0; i < 100; ++i) {
-    rectangleShape.setPosition({0.0f, m_fPixelToMeterSize * i});
-    window->draw(rectangleShape);
+  if (m_bRenderDebugGrid) {
+    rectangleShape.setSize({1.0f, 1024.0f});
+    rectangleShape.setFillColor(sf::Color(50, 50, 50));
+    for (int i = 0; i < 100; ++i) {
+      rectangleShape.setPosition({m_fPixelToMeterSize * i, 0.0f});
+      window->draw(rectangleShape);
+    }
+    rectangleShape.setSize({1024.0f, 1.0f});
+    for (int i = 0; i < 100; ++i) {
+      rectangleShape.setPosition({0.0f, m_fPixelToMeterSize * i});
+      window->draw(rectangleShape);
+    }
   }
 
 
@@ -132,7 +149,6 @@ void Scene::render(sf::RenderWindow* window) const
 
   for (auto& actorsLayer : renderingActors) {
     for (auto& actor : actorsLayer.second) {
-  
       SPtr<Transform> transform = actor->getComponent<Transform>().lock();
       SPtr<Render> renderComp = actor->getComponent<Render>().lock();
       WPtr<ShapeRect> rectComp = actor->getComponent<ShapeRect>();
@@ -150,6 +166,15 @@ void Scene::render(sf::RenderWindow* window) const
   
         if (nullptr != renderComp->m_material.m_pTexture) {
           rectangleShape.setTexture(renderComp->m_material.m_pTexture);
+          rectangleShape.setTextureRect(
+            sf::IntRect(
+              {0,0},
+              static_cast<sf::Vector2i>(renderComp->m_material.m_pTexture->getSize())
+            )
+          );
+        }
+        else {
+          rectangleShape.setTexture(nullptr);
         }
         rectangleShape.setFillColor(renderComp->m_material.m_color);
   
@@ -167,6 +192,15 @@ void Scene::render(sf::RenderWindow* window) const
   
         if (nullptr != renderComp->m_material.m_pTexture) {
           circleShape.setTexture(renderComp->m_material.m_pTexture);
+          rectangleShape.setTextureRect(
+            sf::IntRect(
+              {0,0},
+              static_cast<sf::Vector2i>(renderComp->m_material.m_pTexture->getSize())
+            )
+          );
+        }
+        else {
+          rectangleShape.setTexture(nullptr);
         }
         circleShape.setFillColor(renderComp->m_material.m_color);
   

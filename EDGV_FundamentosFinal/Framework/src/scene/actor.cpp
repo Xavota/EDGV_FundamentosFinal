@@ -62,6 +62,9 @@ bool Actor::isActive() const
 
 void Actor::destroy()
 {
+  for (auto& cmp : m_vComponents) {
+    cmp.reset();
+  }
   m_vComponents.clear();
   m_bIsStarted = false;
 }

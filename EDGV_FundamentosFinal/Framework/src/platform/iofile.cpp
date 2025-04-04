@@ -74,6 +74,11 @@ bool File::isOpen() const
   return m_file.is_open();
 }
 
+bool File::isAtEnd() const
+{
+  return m_file.eof();
+}
+
 void File::writeBytes(Byte* data, U32 bytesCount)
 {
   if (!m_file.is_open() || m_file.fail()
@@ -122,7 +127,7 @@ String File::getLine(char cutLine)
 }
 char File::getNextChar()
 {
-  if (!m_file.is_open() || m_file.fail()
+  if (!m_file.is_open() || m_file.fail() || m_file.eof()
   || Math::hasFlag(m_flags, eOPEN_TYPE::kWriteOnly)) {
     return 0;
   }
@@ -130,4 +135,27 @@ char File::getNextChar()
   char c;
   m_file >> c;
   return c;
+}
+
+Vector<Path> File::getChildPaths(const WString& path, bool recursive)
+{
+  Path rootPath = Path(path);
+
+  if (!std::filesystem::exists(rootPath)) return {};
+
+  Vector<Path> r = {};
+  if (recursive) {
+    for (auto const& dir_entry : std::filesystem::recursive_directory_iterator(rootPath)) {
+      if (!dir_entry.is_directory()) {
+        r.push_back(dir_entry.path());
+      }
+    }
+  }
+  else {
+    for (auto const& dir_entry : std::filesystem::directory_iterator(rootPath)) {
+      r.push_back(dir_entry.path());
+    }
+  }
+
+  return r;
 }
