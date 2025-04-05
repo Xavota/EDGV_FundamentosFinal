@@ -21,8 +21,9 @@ class MovingEntity : public Script
 
  protected:
   virtual U8 getMovementDecision(const sf::Vector2i& dir, U8 options) { return 0; };
-  virtual String getAnimationName() const { return ""; }
 
+  virtual void moveAnimation();
+  virtual String getAnimationName() const { return ""; }
   virtual void setAnimationFrame(const sf::Vector2i& dir, U8 frame);
 
   virtual void move(U8 options);
@@ -31,11 +32,16 @@ class MovingEntity : public Script
 
 
   WPtr<GameMap> m_pGameMap;
+  float m_fOgSpeed;
   float m_fSpeed;
 
   sf::Vector2i m_movementDir;
   sf::Vector2u m_mapPos;
   sf::Vector2f m_posOffset;
+
+  sf::Vector2i m_ogMovementDir;
+  sf::Vector2u m_ogMapPos;
+  sf::Vector2f m_ogPosOffset;
 
   bool m_bCanMove = false;
 

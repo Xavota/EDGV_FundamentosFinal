@@ -1,6 +1,6 @@
 #pragma once
 
-#include <scripts/phantom.h>
+#include <scripts/mapEntities/moving/phantom.h>
 
 class Blinky : public Phantom
 {
@@ -13,6 +13,8 @@ class Blinky : public Phantom
    * @brief Default destructor.
    */
   ~Blinky() = default;
+
+  void init(WPtr<GameMap> map, float speed, U8 phantomIndex) override;
 
  private:
   String getAnimationName() const override { return "phantoms_blinky"; }

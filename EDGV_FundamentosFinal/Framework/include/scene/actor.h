@@ -167,6 +167,7 @@ class Actor : public EnableSPtrFromThis<Actor> {
 
  private:
   friend class Scene;
+  friend class Transform;
 
   /**
    * @brief The name of the actor.

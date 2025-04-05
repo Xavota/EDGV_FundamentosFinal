@@ -1,5 +1,26 @@
 #include "scene/components/transform.h"
 
+#include "scene/actor.h"
+
+Transform::~Transform()
+{
+  if (m_pParent.expired()) return;
+
+  auto& children = m_pParent.lock()->getTransform().lock()->m_vChildren;
+
+  auto childIt = std::find_if(children.begin(), children.end(),
+                              [this](WPtr<Transform> tr){
+                                SPtr<Actor> child = tr.lock()->getActor().lock();
+                                SPtr<Actor> actor = this->getActor().lock();
+                                return child->getName() == actor->getName() &&
+                                 child->m_iSceneHashIndex == actor->m_iSceneHashIndex;
+                              });
+
+  if (childIt == children.end()) return;
+
+  children.erase(childIt);
+}
+
 Matrix3 Transform::getLocalModelMatrix() const
 {
   sf::Vector2f xAxis = {
@@ -121,6 +142,8 @@ void Transform::attachTo(const WPtr<Transform> transformParent,
     auto gScale = getScale();
 
     m_pParent = transformParent;
+    m_pParent.lock()->getTransform().lock()->m_vChildren.push_back(
+      getActor().lock()->getTransform());
 
     setPosition(gPos);
     setRotation(gRot);
@@ -130,4 +153,6 @@ void Transform::attachTo(const WPtr<Transform> transformParent,
   }
 
   m_pParent = transformParent;
+  m_pParent.lock()->getTransform().lock()->m_vChildren.push_back(
+    getActor().lock()->getTransform());
 }

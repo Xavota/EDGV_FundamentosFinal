@@ -22,6 +22,9 @@ namespace eCOMPONENT_TYPE {
     kCircleCollision,
     kRectCollision,
     kScript,
+    kCanvas,
+    kUIText,
+    kButton,
   };
 }
 

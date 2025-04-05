@@ -27,7 +27,7 @@ class Transform : public Component
   /**
    * @brief Default destructor.
    */
-  ~Transform() = default;
+  ~Transform();
 
   /**
    * @brief   Returns the component type.
@@ -130,6 +130,8 @@ class Transform : public Component
   WPtr<Transform> getParent() const { return m_pParent; }
 
  private:
+  friend class Scene;
+
   /**
    * The position of the actor.
    */
@@ -147,4 +149,8 @@ class Transform : public Component
    * The transform component parent.
    */
   WPtr<Transform> m_pParent;
+  /**
+   * The children of this transform component.
+   */
+  Vector<WPtr<Transform>> m_vChildren;
 };

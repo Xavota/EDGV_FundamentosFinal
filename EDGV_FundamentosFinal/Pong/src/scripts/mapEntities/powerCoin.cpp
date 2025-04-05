@@ -1,4 +1,4 @@
-#include "scripts/powerCoin.h"
+#include "scripts/mapEntities/powerCoin.h"
 
 #include <platform/memoryManager.hpp>
 #include <scene/actor.h>
@@ -6,7 +6,7 @@
 #include <scene/components/rectCollider.h>
 #include <resources/collider.h>
 
-#include "scripts/player.h"
+#include "scripts/mapEntities/moving/player.h"
 
 void PowerCoin::start()
 {

@@ -1,5 +1,15 @@
 cmake_minimum_required(VERSION 3.28)
+
 project(FinalProject LANGUAGES CXX)
+
+set(CMAKE_BUILD_TYPE Debug)
+if (MSVC)
+    set(CMAKE_CXX_FLAGS_DEBUG "/Zi /Od /DDEBUG")
+    message("Using MSVC")
+endif()
+
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Debug flags: ${CMAKE_CXX_FLAGS_DEBUG}")
 
 # set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)

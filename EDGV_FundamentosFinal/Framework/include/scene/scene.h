@@ -68,6 +68,12 @@ class Scene : public EnableSPtrFromThis<Scene> {
    */
   void update();
   /**
+   * @brief Add the actor children recursively in the rendering actor map for
+   *        the render funtion, only if they need to be rendered.
+   */
+  void addRenderingActorsRecursive(SPtr<Actor> rootActor,
+                          Map<int, Vector<SPtr<Actor>>>& renderingActors) const;
+  /**
    * @brief Renders everything in the scene. Looks for a render component and a
    *        shape component so it can draw the shape with the material of the
    *        render component.

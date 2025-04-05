@@ -12,6 +12,8 @@
 #include "scene/components/shapeCircle.h"
 #include "scene/components/circleCollider.h"
 #include "scene/components/rectCollider.h"
+#include "scene/components/canvas.h"
+#include "scene/components/uiText.h"
 
 WPtr<Actor> Scene::addActor(const String& name)
 {
@@ -106,6 +108,30 @@ void Scene::update()
   m_vPendingDelete.clear();
 }
 
+void Scene::addRenderingActorsRecursive(SPtr<Actor> rootActor,
+                           Map<int, Vector<SPtr<Actor>>>& renderingActors) const
+{
+  if (!rootActor->isActive()) return;
+
+  WPtr<Render> renderComp = rootActor->getComponent<Render>();
+  WPtr<ShapeRect> rectComp = rootActor->getComponent<ShapeRect>();
+  WPtr<ShapeCircle> circleComp = rootActor->getComponent<ShapeCircle>();
+  if ((!renderComp.expired() && renderComp.lock()->getActive()) &&
+     ((!rectComp.expired() && rectComp.lock()->getActive()) ||
+      (!circleComp.expired() && circleComp.lock()->getActive()))) {
+    int renderIndex = renderComp.lock()->m_iRenderIndex;
+    if (renderingActors.find(renderIndex) == renderingActors.end()) {
+      renderingActors[renderIndex] = {};
+    }
+    renderingActors[renderIndex].push_back(rootActor);
+  }
+
+  auto& children = rootActor->getTransform().lock()->m_vChildren;
+  for (auto& transform : children) {
+    addRenderingActorsRecursive(transform.lock()->getActor().lock(), renderingActors);
+  }
+}
+
 void Scene::render(sf::RenderWindow* window) const
 {
   if (nullptr == window) return;
@@ -131,20 +157,11 @@ void Scene::render(sf::RenderWindow* window) const
 
   Map<int, Vector<SPtr<Actor>>> renderingActors;
   for (auto& actor : m_mActors) {
-    if (!actor.second->isActive()) continue;
+    if (!actor.second->getTransform().lock()->m_pParent.expired()) continue;
 
-    WPtr<Render> renderComp = actor.second->getComponent<Render>();
-    WPtr<ShapeRect> rectComp = actor.second->getComponent<ShapeRect>();
-    WPtr<ShapeCircle> circleComp = actor.second->getComponent<ShapeCircle>();
-    if ((renderComp.expired() || !renderComp.lock()->getActive()) ||
-       ((rectComp.expired()   || !rectComp.lock()->getActive()) &&
-        (circleComp.expired() || !circleComp.lock()->getActive()))) continue;
+    if (!actor.second->getComponent<Canvas>().expired()) continue;
 
-    int renderIndex = renderComp.lock()->m_iRenderIndex;
-    if (renderingActors.find(renderIndex) == renderingActors.end()) {
-      renderingActors[renderIndex] = {};
-    }
-    renderingActors[renderIndex].push_back(actor.second);
+    addRenderingActorsRecursive(actor.second, renderingActors);
   }
 
   for (auto& actorsLayer : renderingActors) {
@@ -217,6 +234,8 @@ void Scene::renderUI(sf::RenderWindow* window) const
 
   // DEBUG ONLY. RENDER THE COLLIDER AREAS IF THEY NEED TO.
   for (auto& actor : m_mActors) {
+    if (!actor.second->isActive()) continue;
+
     WPtr<RectCollider> rectColl =
      actor.second->getComponent<RectCollider>();
     WPtr<CircleCollider> circleColl =
@@ -284,6 +303,90 @@ void Scene::renderUI(sf::RenderWindow* window) const
       circleShape.setOutlineThickness(1.0f);
 
       window->draw(circleShape);
+    }
+  }
+
+
+  Map<int, Vector<SPtr<Actor>>> renderingActors;
+  for (auto& actor : m_mActors) {
+    if (!actor.second->getTransform().lock()->m_pParent.expired()) continue;
+
+    if (actor.second->getComponent<Canvas>().expired()) continue;
+
+    addRenderingActorsRecursive(actor.second, renderingActors);
+  }
+
+  for (auto& actorsLayer : renderingActors) {
+    for (auto& actor : actorsLayer.second) {
+      SPtr<Transform> transform = actor->getComponent<Transform>().lock();
+      SPtr<Render> renderComp = actor->getComponent<Render>().lock();
+      WPtr<ShapeRect> rectComp = actor->getComponent<ShapeRect>();
+      WPtr<ShapeCircle> circleComp = actor->getComponent<ShapeCircle>();
+      WPtr<UIText> textComp = actor->getComponent<UIText>();
+  
+      sf::Vector2f pos = transform->getPosition() * m_fPixelToMeterSize;
+      sf::Angle rot = transform->getRotation();
+      sf::Vector2f scale = transform->getScale() * m_fPixelToMeterSize;
+  
+      if (!rectComp.expired()) {
+        rectangleShape.setPosition(pos);
+        rectangleShape.setSize(scale);
+        rectangleShape.setOrigin(scale * 0.5f);
+        rectangleShape.setRotation(rot);
+  
+        if (nullptr != renderComp->m_material.m_pTexture) {
+          rectangleShape.setTexture(renderComp->m_material.m_pTexture);
+          rectangleShape.setTextureRect(
+            sf::IntRect(
+              {0,0},
+              static_cast<sf::Vector2i>(renderComp->m_material.m_pTexture->getSize())
+            )
+          );
+        }
+        else {
+          rectangleShape.setTexture(nullptr);
+        }
+        rectangleShape.setFillColor(renderComp->m_material.m_color);
+  
+        window->draw(rectangleShape);
+      }
+      if (!circleComp.expired()) {  
+        sf::Vector2f newScale = scale * 0.5f;
+        float radius = std::max(std::abs(newScale.x), std::abs(newScale.y));
+
+        circleShape.setPosition(pos);
+        circleShape.setRadius(radius);
+        circleShape.setOrigin({radius, radius});
+        circleShape.setScale(newScale / radius);
+        circleShape.setRotation(rot);
+  
+        if (nullptr != renderComp->m_material.m_pTexture) {
+          circleShape.setTexture(renderComp->m_material.m_pTexture);
+          rectangleShape.setTextureRect(
+            sf::IntRect(
+              {0,0},
+              static_cast<sf::Vector2i>(renderComp->m_material.m_pTexture->getSize())
+            )
+          );
+        }
+        else {
+          rectangleShape.setTexture(nullptr);
+        }
+        circleShape.setFillColor(renderComp->m_material.m_color);
+  
+        window->draw(circleShape);
+      }
+      if (!textComp.expired() && textComp.lock()->m_pFont != nullptr) {
+        SPtr<UIText> text = textComp.lock();
+        sf::Text uiText(*text->m_pFont, text->m_sText, text->m_iFontSize);
+        uiText.setPosition(pos);
+        uiText.setOrigin(scale * 0.5f);
+        uiText.setRotation(rot);
+
+        uiText.setFillColor(text->m_color);
+  
+        window->draw(uiText);
+      }
     }
   }
 }
@@ -393,6 +496,10 @@ void Scene::checkCollisions() const
   Vector<SPtr<Collider>> colliders = {};
 
   for (auto& actor : m_mActors) {
+    if (!actor.second->isActive()) continue;
+
+    if (!actor.second->getComponent<Canvas>().expired()) continue;
+    
     WPtr<RectCollider> rectColl =
      actor.second->getComponent<RectCollider>();
     WPtr<CircleCollider> circleColl =

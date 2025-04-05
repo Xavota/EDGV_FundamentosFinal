@@ -9,6 +9,7 @@
 #include <map>
 #include <memory>
 #include <random>
+#include <functional>
 
 
 using I8 = std::int8_t;
@@ -51,3 +52,6 @@ using IFStream = std::ifstream;
 using OFStream = std::ofstream;
 
 using Path = std::filesystem::path;
+
+template<class R, class... Args>
+using FuntionPtr = std::function<R(Args...)>;

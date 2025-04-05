@@ -8,8 +8,8 @@
 #include <scene/components/shapeRect.h>
 #include <scene/components/render.h>
 
-#include "scripts/coin.h"
-#include "scripts/powerCoin.h"
+#include "scripts/mapEntities/coin.h"
+#include "scripts/mapEntities/powerCoin.h"
 #include "scripts/gameMap.h"
 
 void MapBuilder::init(const WString& fileName, SPtr<GameMap> map)

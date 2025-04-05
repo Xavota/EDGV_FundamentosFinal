@@ -13,10 +13,14 @@
 
 void PongFramework::onInit()
 {
+  std::cout << "OnInit" << std::endl;
+
   auto& textureMan = gl::TextureManager::instance();
 
   Vector<Path> paths =
    File::getChildPaths(L"../Pong/resources/sprites/", true);
+   //File::getChildPaths(L"C:/Develop/Especialidad/Proyectos/EDGV_FundamentosFinal/EDGV_FundamentosFinal/Pong/resources/sprites/", true);
+  std::cout << "Paths count: " << paths.size() << std::endl;
   for (const auto& p : paths) {
     String textureName =
      std::filesystem::relative(p, "../Pong/resources/sprites/").generic_string();
@@ -27,6 +31,7 @@ void PongFramework::onInit()
 
     textureMan.addTexture(textureName, p.generic_string(), sf::Color::Black);
   }
+
 
   SceneManager::instance().m_bDebug = false;
   SPtr<Scene> testScene = SceneManager::instance().addScene("TestScene").lock();

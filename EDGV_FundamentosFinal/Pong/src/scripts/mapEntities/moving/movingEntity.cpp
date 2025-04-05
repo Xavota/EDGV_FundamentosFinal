@@ -1,4 +1,4 @@
-#include "scripts/movingEntity.h"
+#include "scripts/mapEntities/moving/movingEntity.h"
 
 #include <platform/math.h>
 
@@ -53,6 +53,18 @@ void MovingEntity::move(U8 options)
   }
 }
 
+void MovingEntity::moveAnimation()
+{
+  m_iCurrentFrameTime += gl::Time::instance().deltaTime();
+  if (m_iCurrentFrameTime >= m_fMaxFrameTime) {
+    m_iCurrentFrameTime -= m_fMaxFrameTime;
+    ++m_iCurrentAnimationFrame;
+    m_iCurrentAnimationFrame %= m_iMaxAnimationFrames;
+
+    setAnimationFrame(m_movementDir, m_iCurrentAnimationFrame);
+  }
+}
+
 void MovingEntity::setAnimationFrame(const sf::Vector2i& dir, U8 frame)
 {
   String animationName = getAnimationName();
@@ -89,7 +101,9 @@ void MovingEntity::update()
 
   SPtr<GameMap> map = m_pGameMap.lock();
   if (m_bCanMove) {
+    //std::cout << "GettingMovementOption " << getActor().lock()->getName() << std::endl;
     U8 options = map->getMovementOptions(m_mapPos);
+    //std::cout << "GotMovementOption " << getActor().lock()->getName() << std::endl;
 
     move(options);
 
@@ -126,13 +140,6 @@ void MovingEntity::update()
     transform->setLocalPosition(
       static_cast<sf::Vector2f>(m_mapPos) + m_posOffset);
 
-    m_iCurrentFrameTime += gl::Time::instance().deltaTime();
-    if (m_iCurrentFrameTime >= m_fMaxFrameTime) {
-      m_iCurrentFrameTime -= m_fMaxFrameTime;
-      ++m_iCurrentAnimationFrame;
-      m_iCurrentAnimationFrame %= m_iMaxAnimationFrames;
-
-      setAnimationFrame(m_movementDir, m_iCurrentAnimationFrame);
-    }
+    moveAnimation();
   }
 }
