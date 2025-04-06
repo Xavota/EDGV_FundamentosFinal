@@ -1,6 +1,7 @@
 #include "scripts/mapEntities/moving/movingEntity.h"
 
 #include <platform/math.h>
+#include <platform/iofile.h>
 
 #include <tools/time.h>
 #include <tools/textureManager.h>
@@ -10,6 +11,35 @@
 #include <scene/components/render.h>
 
 #include "scripts/gameMap.h"
+
+void MovingEntity::saveToFile(File& saveFile)
+{
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_fOgSpeed), sizeof(float));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_fSpeed), sizeof(float));
+
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_movementDir), sizeof(sf::Vector2i));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_mapPos), sizeof(sf::Vector2u));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_posOffset), sizeof(sf::Vector2f));
+
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_ogMovementDir), sizeof(sf::Vector2i));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_ogMapPos), sizeof(sf::Vector2u));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_ogPosOffset), sizeof(sf::Vector2f));
+
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_bCanMove), sizeof(bool));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_bPaused), sizeof(bool));
+
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_iMaxAnimationFrames), sizeof(U32));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_iMaxAnimationFrames), sizeof(U32));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_fMaxFrameTime), sizeof(float));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_fCurrentFrameTime), sizeof(float));
+
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_bWrapping), sizeof(bool));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_bEnteringWrapping), sizeof(bool));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_wrappingEntrancePos), sizeof(sf::Vector2u));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_wrappingExitPos), sizeof(sf::Vector2u));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_wrappingEntranceDir), sizeof(sf::Vector2i));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_wrappingExitDir), sizeof(sf::Vector2i));
+}
 
 void MovingEntity::setCanMove(bool can)
 {
@@ -99,9 +129,9 @@ void MovingEntity::move(U8 options)
 
 void MovingEntity::moveAnimation()
 {
-  m_iCurrentFrameTime += gl::Time::instance().deltaTime();
-  if (m_iCurrentFrameTime >= m_fMaxFrameTime) {
-    m_iCurrentFrameTime -= m_fMaxFrameTime;
+  m_fCurrentFrameTime += gl::Time::instance().deltaTime();
+  if (m_fCurrentFrameTime >= m_fMaxFrameTime) {
+    m_fCurrentFrameTime -= m_fMaxFrameTime;
     ++m_iCurrentAnimationFrame;
     m_iCurrentAnimationFrame %= m_iMaxAnimationFrames;
 

@@ -6,6 +6,7 @@ class GameMap;
 class GameManager;
 class Render;
 class Coin;
+class File;
 
 class Player : public MovingEntity
 {
@@ -18,6 +19,8 @@ class Player : public MovingEntity
    * @brief Default destructor.
    */
   ~Player() = default;
+
+  void saveToFile(File& saveFile) override;
 
   void init(WPtr<GameMap> map, float speed,
             FuntionPtr<void> eatablePhantoms, FuntionPtr<void> died,

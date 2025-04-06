@@ -2,6 +2,8 @@
 
 #include "scripts/mapEntities/moving/movingEntity.h"
 
+class File;
+
 class Phantom : public MovingEntity
 {
  public:
@@ -13,6 +15,8 @@ class Phantom : public MovingEntity
    * @brief Default destructor.
    */
   virtual ~Phantom() = default;
+
+  void saveToFile(File& saveFile) override;
 
   virtual void init(WPtr<GameMap> map, float speed, U8 phantomIndex);
 

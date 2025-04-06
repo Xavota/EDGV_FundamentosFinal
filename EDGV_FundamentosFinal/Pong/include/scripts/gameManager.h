@@ -31,6 +31,9 @@ class GameManager : public Script, public EnableSPtrFromThis<GameManager>
 
   bool isGameOver();
 
+  void saveGame();
+  void loadGame();
+
   SPtr<GameMap> m_pGameMap;
   SPtr<StateMachine> m_pStateMachine;
 
@@ -39,6 +42,8 @@ class GameManager : public Script, public EnableSPtrFromThis<GameManager>
   SPtr<Actor> m_pGameMenu;
   SPtr<Actor> m_pGameOverMenu;
   SPtr<Actor> m_pGameWonMenu;
+
+  WString m_sMapFile = L"../Pong/resources/baseMap.map";
 
  private:
   void start() override;

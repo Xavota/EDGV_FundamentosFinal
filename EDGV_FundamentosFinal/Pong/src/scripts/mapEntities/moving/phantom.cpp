@@ -1,8 +1,7 @@
 #include "scripts/mapEntities/moving/phantom.h"
 
-#include <scene/actor.h>
-
 #include <platform/math.h>
+#include <platform/iofile.h>
 
 #include <tools/time.h>
 #include <tools/textureManager.h>
@@ -15,6 +14,28 @@
 
 #include "scripts/gameMap.h"
 #include "scripts/mapEntities/moving/player.h"
+
+void Phantom::saveToFile(File& saveFile)
+{
+  /*
+  sf::Vector2u m_lastPos;
+
+  bool m_bIsEatable = false;
+  bool m_bIsBeenEaten = false;
+
+  float m_fEatableMaxTime;
+  float m_fEatableTime;
+  */
+  MovingEntity::saveToFile(saveFile);
+
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_lastPos), sizeof(sf::Vector2u));
+
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_bIsEatable), sizeof(bool));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_bIsBeenEaten), sizeof(bool));
+
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_fEatableMaxTime), sizeof(float));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_fEatableTime), sizeof(float));
+}
 
 void Phantom::init(WPtr<GameMap> map, float speed, U8 phantomIndex)
 {
@@ -281,7 +302,7 @@ void Phantom::onCollisionEnter(CollisionInfo info)
 void Phantom::update()
 {
   MovingEntity::update();
-  
+
   if (m_bPaused) return;
 
   if (m_bIsEatable && m_bCanMove) {

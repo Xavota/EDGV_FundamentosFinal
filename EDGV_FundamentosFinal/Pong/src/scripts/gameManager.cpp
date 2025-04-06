@@ -2,6 +2,8 @@
 
 #include "pongFramework.h"
 
+#include <platform/iofile.h>
+
 #include <tools/textureManager.h>
 #include <tools/fontManager.h>
 
@@ -42,7 +44,7 @@ void GameManager::start()
 
   SPtr<Actor> mapBuilder = getScene().lock()->addActor("mapBuilder").lock();
   SPtr<MapBuilder> mapBuilderComp = mapBuilder->addComponent<MapBuilder>().lock();
-  mapBuilderComp->init(L"../Pong/resources/baseMap.map", m_pGameMap);
+  mapBuilderComp->init(m_sMapFile, m_pGameMap);
 
   m_pGameMap->init([this] () {
     std::cout << "Last Coin" << std::endl;
@@ -164,6 +166,35 @@ bool GameManager::isGameOver()
 {
   //std::cout << "isGameOver? m_pPlayer->m_iLives: " << m_pPlayer->m_iLives << std::endl;
   return m_pPlayer->m_iLives == 0;
+}
+
+void GameManager::loadGame()
+{
+  
+}
+void GameManager::saveGame()
+{
+  std::cout << "Save Game" << std::endl;
+
+  File saveFile(L"../saves/saveFile.pac",
+          eOPEN_TYPE::kBinary | eOPEN_TYPE::kWriteOnly | eOPEN_TYPE::kTruncate);
+
+  // TODO: EVENTUALMENTE SE ACEPTARÁN MÁS ARCHIVOS DE MAPAS Y ESTO VA A SER
+  //       NECESARIO
+  /*U32 mapNameSize = static_cast<U32>(m_sMapFile.size());
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&mapNameSize),
+                      sizeof(U32));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_sMapFile),
+                      m_sMapFile.size() * sizeof(wchar_t));*/
+
+  m_pGameMap->saveToFile(saveFile);
+  m_pPlayer->saveToFile(saveFile);
+  m_pBlinky->saveToFile(saveFile);
+  m_pPinky->saveToFile(saveFile);
+  m_pInky->saveToFile(saveFile);
+  m_pClyde->saveToFile(saveFile);
+
+  saveFile.close();
 }
 
 
@@ -357,9 +388,9 @@ void GameManager::makePauseMenu(WPtr<Transform> canvasT)
   SPtr<Render> pauseMenuSaveGameBtnRender = pauseMenuSaveGameBtn->addComponent<Render>().lock();
   pauseMenuSaveGameBtnRender->m_material.m_color = sf::Color::White;
   SPtr<Button> pauseMenuSaveGameBtnComp = pauseMenuSaveGameBtn->addComponent<Button>().lock();
-  pauseMenuSaveGameBtnComp->m_fpOnClickStops = [] ()
+  pauseMenuSaveGameBtnComp->m_fpOnClickStops = [this] ()
   {
-    std::cout << "Save Game" << std::endl;
+    saveGame();
   };
 
   SPtr<Actor> pauseMenuSaveGameBtnTxt = getScene().lock()->addActor("saveGameBtnText").lock();

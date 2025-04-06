@@ -1,10 +1,50 @@
 #include "scripts/gameMap.h"
 
 #include <platform/math.h>
+#include <platform/iofile.h>
 
 #include <scene/actor.h>
 
 #include "scripts/mapEntities/collectable.h"
+
+void GameMap::saveToFile(File& saveFile)
+{
+ /*
+  bool m_bIsValid = false;
+
+  Vector<Vector<U8>> m_vMapTiles;
+  Map<U32, SPtr<Collectable>> m_mCollectables;
+  U32 m_iActiveCollectables = 0;
+
+  FuntionPtr<void> m_fpCollectedAll = nullptr;
+
+  sf::Vector2u m_wrapUpPosition = {};
+  sf::Vector2u m_wrapDownPosition = {};
+  sf::Vector2u m_wrapLeftPosition = {};
+  sf::Vector2u m_wrapRightPosition = {};
+
+  sf::Vector2u m_phantomSpawnExit1 = {};
+  sf::Vector2u m_phantomSpawnExit2 = {};
+  U8 m_iPhantomSpawnExitDirection = 0;
+
+  sf::Vector2u m_phantomSpawnStartPosition = {};
+  sf::Vector2u m_phantomSpawnEndPosition = {};
+
+  sf::Vector2u m_playerSpawn1 = {};
+  sf::Vector2u m_playerSpawn2 = {};
+ */
+
+  for (auto& coll : m_mCollectables) {
+    U32 tileCode = coll.first;
+    bool active = coll.second->getActor().lock()->isLocalActive();
+    saveFile.writeBytes(reinterpret_cast<Byte*>(&tileCode), sizeof(U32));
+    saveFile.writeBytes(reinterpret_cast<Byte*>(&active), sizeof(bool));
+  }
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_iActiveCollectables), sizeof(U32));
+
+  // TODO: GUARDAR EL RESTO DE COSAS DEL MAPA PARA EVENTUALMENTE ACEPTAR MÁS
+  //       ARCHIVOS DE MAPAS
+}
 
 bool GameMap::init(FuntionPtr<void> collectedAll)
 {

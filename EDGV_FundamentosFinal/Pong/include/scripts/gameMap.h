@@ -3,6 +3,7 @@
 #include <scene/components/script.h>
 
 class Collectable;
+class File;
 
 namespace eMAP_TILE_TYPE
 {
@@ -58,8 +59,7 @@ class GameMap : public Script
   };
 
 
-  const float m_fMaxWrappingDistance = 3.0f;
-
+  virtual void saveToFile(File& saveFile);
 
   bool init(FuntionPtr<void> collectedAll);
   void restart();
@@ -74,6 +74,9 @@ class GameMap : public Script
   virtual SpawnInfo getPhantomSpawnInfo(U32 index) const;
 
   virtual void collected(U32 tileCode);
+
+
+  const float m_fMaxWrappingDistance = 3.0f;
 
  private:
   friend class MapBuilder;

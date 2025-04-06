@@ -1,6 +1,7 @@
 #include "scripts/mapEntities/moving/player.h"
 
 #include <platform/math.h>
+#include <platform/iofile.h>
 
 #include <tools/time.h>
 #include <tools/textureManager.h>
@@ -14,6 +15,27 @@
 
 #include "scripts/gameManager.h"
 #include "scripts/gameMap.h"
+
+void Player::saveToFile(File& saveFile)
+{
+  MovingEntity::saveToFile(saveFile);
+
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_bCollectedCoin), sizeof(bool));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_bCollectedCoinStep), sizeof(bool));
+
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_bDead), sizeof(bool));
+
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_fTimeToStartDeadAnimation), sizeof(float));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_fMaxTimeToStartDeadAnimation), sizeof(float));
+
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_fTimeToFinishDeadAnimation), sizeof(float));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_fMaxTimeToFinishDeadAnimation), sizeof(float));
+
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_lastPos), sizeof(sf::Vector2u));
+
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_iOgLives), sizeof(U32));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_iLives), sizeof(U32));
+}
 
 void Player::init(WPtr<GameMap> map, float speed,
                   FuntionPtr<void> eatablePhantoms, FuntionPtr<void> died,
@@ -90,7 +112,7 @@ void Player::dead()
   m_bCanMove = false;
 
   m_iCurrentAnimationFrame = 0;
-  m_iCurrentFrameTime = 0.0f;
+  m_fCurrentFrameTime = 0.0f;
   m_iMaxAnimationFrames = 12;
 
   m_fTimeToStartDeadAnimation = 0.0f;
@@ -122,7 +144,7 @@ void Player::reset()
   m_bDead = false;
 
   m_iCurrentAnimationFrame = 0;
-  m_iCurrentFrameTime = 0.0f;
+  m_fCurrentFrameTime = 0.0f;
   m_iMaxAnimationFrames = 3;
 
   SPtr<Transform> transform = getTransform().lock();

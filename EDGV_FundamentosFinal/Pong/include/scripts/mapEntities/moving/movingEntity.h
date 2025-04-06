@@ -4,6 +4,7 @@
 
 class GameMap;
 class Render;
+class File;
 
 class MovingEntity : public Script
 {
@@ -19,6 +20,8 @@ class MovingEntity : public Script
 
   virtual void setCanMove(bool can);
   virtual void setPaused(bool paused);
+
+  virtual void saveToFile(File& saveFile);
 
  protected:
   virtual U8 getMovementDecision(const sf::Vector2i& dir, U8 options) { return 0; };
@@ -51,7 +54,7 @@ class MovingEntity : public Script
   U32 m_iMaxAnimationFrames = 3;
   U32 m_iCurrentAnimationFrame = 0;
   float m_fMaxFrameTime = 0.08f;
-  float m_iCurrentFrameTime = 0.0f;
+  float m_fCurrentFrameTime = 0.0f;
 
   bool m_bWrapping = false;
   bool m_bEnteringWrapping = false;
