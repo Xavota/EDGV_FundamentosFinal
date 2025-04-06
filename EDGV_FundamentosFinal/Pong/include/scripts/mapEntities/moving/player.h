@@ -21,6 +21,7 @@ class Player : public MovingEntity
   ~Player() = default;
 
   void saveToFile(File& saveFile) override;
+  void loadFromFile(File& loadFile) override;
 
   void init(WPtr<GameMap> map, float speed,
             FuntionPtr<void> eatablePhantoms, FuntionPtr<void> died,

@@ -60,6 +60,7 @@ class GameMap : public Script
 
 
   virtual void saveToFile(File& saveFile);
+  virtual void loadFromFile(File& loadFile);
 
   bool init(FuntionPtr<void> collectedAll);
   void restart();

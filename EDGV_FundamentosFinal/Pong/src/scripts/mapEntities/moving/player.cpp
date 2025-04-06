@@ -37,6 +37,29 @@ void Player::saveToFile(File& saveFile)
   saveFile.writeBytes(reinterpret_cast<Byte*>(&m_iLives), sizeof(U32));
 }
 
+void Player::loadFromFile(File& loadFile)
+{
+  MovingEntity::loadFromFile(loadFile);
+
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_bCollectedCoin), sizeof(bool));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_bCollectedCoinStep), sizeof(bool));
+
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_bDead), sizeof(bool));
+
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_fTimeToStartDeadAnimation), sizeof(float));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_fMaxTimeToStartDeadAnimation), sizeof(float));
+
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_fTimeToFinishDeadAnimation), sizeof(float));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_fMaxTimeToFinishDeadAnimation), sizeof(float));
+
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_lastPos), sizeof(sf::Vector2u));
+
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_iOgLives), sizeof(U32));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_iLives), sizeof(U32));
+
+  setAnimationFrame(m_movementDir, m_iCurrentAnimationFrame);
+}
+
 void Player::init(WPtr<GameMap> map, float speed,
                   FuntionPtr<void> eatablePhantoms, FuntionPtr<void> died,
                   FuntionPtr<void> finishedDying)

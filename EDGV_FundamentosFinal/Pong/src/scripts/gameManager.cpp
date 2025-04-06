@@ -102,6 +102,8 @@ void GameManager::start()
 
 void GameManager::newGame()
 {
+  std::cout << "New Game" << std::endl;
+
   resetMovingObj();
   m_pPlayer->m_iLives = m_pPlayer->m_iOgLives;
   m_pGameMap->restart();
@@ -168,9 +170,52 @@ bool GameManager::isGameOver()
   return m_pPlayer->m_iLives == 0;
 }
 
-void GameManager::loadGame()
+bool GameManager::loadGame()
 {
-  
+  std::cout << "Load Game" << std::endl;
+
+  File loadFile(L"../saves/saveFile.pac",
+                eOPEN_TYPE::kBinary | eOPEN_TYPE::kReadOnly);
+
+  if (!loadFile.isOpen()) return false;
+
+  // TODO: EVENTUALMENTE SE ACEPTARÁN MÁS ARCHIVOS DE MAPAS Y ESTO VA A SER
+  //       NECESARIO
+  /*U32 mapNameSize = static_cast<U32>(m_sMapFile.size());
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&mapNameSize),
+                      sizeof(U32));
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&m_sMapFile),
+                      m_sMapFile.size() * sizeof(wchar_t));*/
+
+  m_pGameMap->loadFromFile(loadFile);
+  m_pPlayer-> loadFromFile(loadFile);
+  m_pBlinky-> loadFromFile(loadFile);
+  m_pPinky->  loadFromFile(loadFile);
+  m_pInky->   loadFromFile(loadFile);
+  m_pClyde->  loadFromFile(loadFile);
+
+  loadFile.close();
+
+  m_pBlinky->getActor().lock()->setActive(true);
+  m_pPinky->getActor().lock()-> setActive(true);
+  m_pInky->getActor().lock()->  setActive(true);
+  m_pClyde->getActor().lock()-> setActive(true);
+
+  m_pPlayer->setCanMove(false);
+  m_pBlinky->setCanMove(false);
+  m_pPinky->setCanMove (false);
+  m_pInky->setCanMove  (false);
+  m_pClyde->setCanMove (false);
+
+  m_pPlayer->setPaused(false);
+  m_pBlinky->setPaused(false);
+  m_pPinky-> setPaused(false);
+  m_pInky->  setPaused(false);
+  m_pClyde-> setPaused(false);
+
+  prepareGame();
+
+  return true;
 }
 void GameManager::saveGame()
 {
@@ -253,7 +298,7 @@ void GameManager::makeMainMenu(WPtr<Transform> canvasT)
   SPtr<Button> mainMenuNewGameBtnComp = mainMenuNewGameBtn->addComponent<Button>().lock();
   mainMenuNewGameBtnComp->m_fpOnClickStops = [this] ()
   {
-    std::cout << "New Game" << std::endl;
+    newGame();
     m_pStateMachine->externalInput(eEXTERNAL_INPUT::kStartGame);
   };
 
@@ -278,8 +323,10 @@ void GameManager::makeMainMenu(WPtr<Transform> canvasT)
   SPtr<Render> mainMenuLoadGameBtnRender = mainMenuLoadGameBtn->addComponent<Render>().lock();
   mainMenuLoadGameBtnRender->m_material.m_color = sf::Color::White;
   SPtr<Button> mainMenuLoadGameBtnComp = mainMenuLoadGameBtn->addComponent<Button>().lock();
-  mainMenuLoadGameBtnComp->m_fpOnClickStops = [] ()
+  mainMenuLoadGameBtnComp->m_fpOnClickStops = [this] ()
   {
+    if (!loadGame()) return;
+    m_pStateMachine->externalInput(eEXTERNAL_INPUT::kStartGame);
     std::cout << "Load Game" << std::endl;
   };
 

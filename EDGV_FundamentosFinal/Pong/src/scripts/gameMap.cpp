@@ -9,31 +9,8 @@
 
 void GameMap::saveToFile(File& saveFile)
 {
- /*
-  bool m_bIsValid = false;
-
-  Vector<Vector<U8>> m_vMapTiles;
-  Map<U32, SPtr<Collectable>> m_mCollectables;
-  U32 m_iActiveCollectables = 0;
-
-  FuntionPtr<void> m_fpCollectedAll = nullptr;
-
-  sf::Vector2u m_wrapUpPosition = {};
-  sf::Vector2u m_wrapDownPosition = {};
-  sf::Vector2u m_wrapLeftPosition = {};
-  sf::Vector2u m_wrapRightPosition = {};
-
-  sf::Vector2u m_phantomSpawnExit1 = {};
-  sf::Vector2u m_phantomSpawnExit2 = {};
-  U8 m_iPhantomSpawnExitDirection = 0;
-
-  sf::Vector2u m_phantomSpawnStartPosition = {};
-  sf::Vector2u m_phantomSpawnEndPosition = {};
-
-  sf::Vector2u m_playerSpawn1 = {};
-  sf::Vector2u m_playerSpawn2 = {};
- */
-
+  U32 collectablesCount = static_cast<U32>(m_mCollectables.size());
+  saveFile.writeBytes(reinterpret_cast<Byte*>(&collectablesCount), sizeof(U32));
   for (auto& coll : m_mCollectables) {
     U32 tileCode = coll.first;
     bool active = coll.second->getActor().lock()->isLocalActive();
@@ -41,6 +18,25 @@ void GameMap::saveToFile(File& saveFile)
     saveFile.writeBytes(reinterpret_cast<Byte*>(&active), sizeof(bool));
   }
   saveFile.writeBytes(reinterpret_cast<Byte*>(&m_iActiveCollectables), sizeof(U32));
+
+  // TODO: GUARDAR EL RESTO DE COSAS DEL MAPA PARA EVENTUALMENTE ACEPTAR MÁS
+  //       ARCHIVOS DE MAPAS
+}
+
+void GameMap::loadFromFile(File& loadFile)
+{
+  U32 collectablesCount = 0;
+  loadFile.readBytes(reinterpret_cast<Byte*>(&collectablesCount), sizeof(U32));
+  for (U32 i = 0; i < collectablesCount; ++i) {
+    U32 tileCode = 0;
+    bool active = false;
+    loadFile.readBytes(reinterpret_cast<Byte*>(&tileCode), sizeof(U32));
+    loadFile.readBytes(reinterpret_cast<Byte*>(&active), sizeof(bool));
+
+    if (!m_mCollectables.contains(tileCode)) continue;
+    m_mCollectables[tileCode]->getActor().lock()->setActive(active);
+  }
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_iActiveCollectables), sizeof(U32));
 
   // TODO: GUARDAR EL RESTO DE COSAS DEL MAPA PARA EVENTUALMENTE ACEPTAR MÁS
   //       ARCHIVOS DE MAPAS

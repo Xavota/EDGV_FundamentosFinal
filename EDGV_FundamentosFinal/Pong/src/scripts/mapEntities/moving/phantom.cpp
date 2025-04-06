@@ -17,15 +17,6 @@
 
 void Phantom::saveToFile(File& saveFile)
 {
-  /*
-  sf::Vector2u m_lastPos;
-
-  bool m_bIsEatable = false;
-  bool m_bIsBeenEaten = false;
-
-  float m_fEatableMaxTime;
-  float m_fEatableTime;
-  */
   MovingEntity::saveToFile(saveFile);
 
   saveFile.writeBytes(reinterpret_cast<Byte*>(&m_lastPos), sizeof(sf::Vector2u));
@@ -35,6 +26,21 @@ void Phantom::saveToFile(File& saveFile)
 
   saveFile.writeBytes(reinterpret_cast<Byte*>(&m_fEatableMaxTime), sizeof(float));
   saveFile.writeBytes(reinterpret_cast<Byte*>(&m_fEatableTime), sizeof(float));
+}
+
+void Phantom::loadFromFile(File& loadFile)
+{
+  MovingEntity::loadFromFile(loadFile);
+
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_lastPos), sizeof(sf::Vector2u));
+
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_bIsEatable), sizeof(bool));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_bIsBeenEaten), sizeof(bool));
+
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_fEatableMaxTime), sizeof(float));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_fEatableTime), sizeof(float));
+
+  setAnimationFrame(m_movementDir, m_iCurrentAnimationFrame);
 }
 
 void Phantom::init(WPtr<GameMap> map, float speed, U8 phantomIndex)

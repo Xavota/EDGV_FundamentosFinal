@@ -32,7 +32,7 @@ class GameManager : public Script, public EnableSPtrFromThis<GameManager>
   bool isGameOver();
 
   void saveGame();
-  void loadGame();
+  bool loadGame();
 
   SPtr<GameMap> m_pGameMap;
   SPtr<StateMachine> m_pStateMachine;

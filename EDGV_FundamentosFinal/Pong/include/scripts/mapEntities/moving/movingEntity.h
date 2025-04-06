@@ -22,6 +22,7 @@ class MovingEntity : public Script
   virtual void setPaused(bool paused);
 
   virtual void saveToFile(File& saveFile);
+  virtual void loadFromFile(File& loadFile);
 
  protected:
   virtual U8 getMovementDecision(const sf::Vector2i& dir, U8 options) { return 0; };

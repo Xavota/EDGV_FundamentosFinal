@@ -21,7 +21,6 @@ U8 StateMainMenu::update(WPtr<GameManager> gameManager)
 U8 StateMainMenu::externalInput(U8 input, WPtr<GameManager> gameManager)
 {
   if (input == eEXTERNAL_INPUT::kStartGame) {
-    gameManager.lock()->newGame();
     return eSTATE_INDEX::kGameStarting;
   }
   return 0;

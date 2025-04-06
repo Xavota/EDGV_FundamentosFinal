@@ -17,6 +17,7 @@ class Phantom : public MovingEntity
   virtual ~Phantom() = default;
 
   void saveToFile(File& saveFile) override;
+  void loadFromFile(File& loadFile) override;
 
   virtual void init(WPtr<GameMap> map, float speed, U8 phantomIndex);
 

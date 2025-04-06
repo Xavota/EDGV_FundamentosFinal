@@ -41,6 +41,39 @@ void MovingEntity::saveToFile(File& saveFile)
   saveFile.writeBytes(reinterpret_cast<Byte*>(&m_wrappingExitDir), sizeof(sf::Vector2i));
 }
 
+void MovingEntity::loadFromFile(File& loadFile)
+{
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_fOgSpeed), sizeof(float));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_fSpeed), sizeof(float));
+
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_movementDir), sizeof(sf::Vector2i));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_mapPos), sizeof(sf::Vector2u));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_posOffset), sizeof(sf::Vector2f));
+
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_ogMovementDir), sizeof(sf::Vector2i));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_ogMapPos), sizeof(sf::Vector2u));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_ogPosOffset), sizeof(sf::Vector2f));
+
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_bCanMove), sizeof(bool));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_bPaused), sizeof(bool));
+
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_iMaxAnimationFrames), sizeof(U32));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_iMaxAnimationFrames), sizeof(U32));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_fMaxFrameTime), sizeof(float));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_fCurrentFrameTime), sizeof(float));
+
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_bWrapping), sizeof(bool));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_bEnteringWrapping), sizeof(bool));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_wrappingEntrancePos), sizeof(sf::Vector2u));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_wrappingExitPos), sizeof(sf::Vector2u));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_wrappingEntranceDir), sizeof(sf::Vector2i));
+  loadFile.readBytes(reinterpret_cast<Byte*>(&m_wrappingExitDir), sizeof(sf::Vector2i));
+
+  SPtr<Transform> transform = getTransform().lock();
+  transform->setLocalPosition(
+    static_cast<sf::Vector2f>(m_mapPos) + m_posOffset);
+}
+
 void MovingEntity::setCanMove(bool can)
 {
   m_bCanMove = can;
