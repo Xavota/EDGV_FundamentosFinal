@@ -3,11 +3,14 @@
 #include <tools/time.h>
 #include <tools/input.h>
 
+#include <scene/actor.h>
+
 #include "scripts/gameManager.h"
 #include "scripts/statesPattern/stateMachine.h"
 
 void StateGamePlaying::enter(U8 lastState, WPtr<GameManager> gameManager)
 {
+  gameManager.lock()->m_pGameMenu->setActive(true);
   if (lastState == eSTATE_INDEX::kGamePaused) {
     gameManager.lock()->resume();
   }
@@ -39,4 +42,9 @@ U8 StateGamePlaying::externalInput(U8 input, WPtr<GameManager> gameManager)
     return eSTATE_INDEX::kGameWon;
   }
   return 0;
+}
+
+void StateGamePlaying::exit(WPtr<GameManager> gameManager)
+{
+  gameManager.lock()->m_pGameMenu->setActive(false);
 }

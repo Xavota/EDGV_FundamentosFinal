@@ -17,4 +17,5 @@ class StateGamePlaying : public State
   void enter(U8 lastState, WPtr<GameManager> gameManager) override;
   U8 update(WPtr<GameManager> gameManager) override;
   U8 externalInput(U8 input, WPtr<GameManager> gameManager) override;
+  void exit(WPtr<GameManager> gameManager) override;
 };

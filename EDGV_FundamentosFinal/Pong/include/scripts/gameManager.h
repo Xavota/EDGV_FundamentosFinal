@@ -43,6 +43,9 @@ class GameManager : public Script, public EnableSPtrFromThis<GameManager>
   SPtr<Actor> m_pGameOverMenu;
   SPtr<Actor> m_pGameWonMenu;
 
+  SPtr<Actor> m_pReadyTxt;
+  Vector<SPtr<Actor>> m_vVisualLives = {};
+
   WString m_sMapFile = L"../Pong/resources/baseMap.map";
 
  private:

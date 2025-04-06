@@ -66,6 +66,6 @@ class Player : public MovingEntity
 
   sf::Vector2u m_lastPos;
 
-  U32 m_iOgLives = 2;
+  U32 m_iOgLives = 5;
   U32 m_iLives;
 };

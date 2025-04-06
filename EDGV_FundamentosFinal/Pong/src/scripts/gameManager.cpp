@@ -112,6 +112,10 @@ void GameManager::newGame()
 void GameManager::prepareGame()
 {
   m_pGameMap->getActor().lock()->setActive(true);
+
+  for (I32 i = 0; i < 6; ++i) {
+    m_vVisualLives[i]->setActive(i < static_cast<I32>(m_pPlayer->m_iLives) - 1);
+  }
 }
 void GameManager::startPlaying()
 {
@@ -261,6 +265,10 @@ void GameManager::playerDied()
   m_pInky->setCanMove(false);
   m_pClyde->getActor().lock()->setActive(false);
   m_pClyde->setCanMove(false);
+
+  for (I32 i = 0; i < 6; ++i) {
+    m_vVisualLives[i]->setActive(i < static_cast<I32>(m_pPlayer->m_iLives) - 1);
+  }
 }
 
 
@@ -483,24 +491,37 @@ void GameManager::makeGameMenu(WPtr<Transform> canvasT)
 {
   auto& framework = PongFramework::instance();
   auto& fontMan = gl::FontManager::instance();
+  auto& textureMan = gl::TextureManager::instance();
 
   m_pGameMenu = getScene().lock()->addActor("gameMenu").lock();
   SPtr<Transform> gameMenuT = m_pGameMenu->getTransform().lock();
   gameMenuT->attachTo(canvasT);
   m_pGameMenu->setActive(false);
 
-  SPtr<Actor> gameMenuReadyText = getScene().lock()->addActor("readyText").lock();
-  SPtr<Transform> gameMenuReadyTextT = gameMenuReadyText->getTransform().lock();
+  m_pReadyTxt = getScene().lock()->addActor("readyText").lock();
+  SPtr<Transform> gameMenuReadyTextT = m_pReadyTxt->getTransform().lock();
   gameMenuReadyTextT->attachTo(gameMenuT);
   gameMenuReadyTextT->setLocalPosition({14.0f, 21.5f});
   gameMenuReadyTextT->setLocalScale({6.0f, 1.1f});
-  SPtr<UIText> gameMenuReadyTextText = gameMenuReadyText->addComponent<UIText>().lock();
+  SPtr<UIText> gameMenuReadyTextText = m_pReadyTxt->addComponent<UIText>().lock();
   gameMenuReadyTextText->m_sText = "Ready!";
   gameMenuReadyTextText->m_iFontSize = 25u;
   gameMenuReadyTextText->m_pFont = fontMan.getFont("PressStart2P");
-  SPtr<Render> gameMenuReadyTextRender = gameMenuReadyText->addComponent<Render>().lock();
+  SPtr<Render> gameMenuReadyTextRender = m_pReadyTxt->addComponent<Render>().lock();
   gameMenuReadyTextRender->m_material.m_color = sf::Color::Yellow;
-  //gameMenuReadyText->addComponent<ShapeRect>();
+  //m_pReadyTxt->addComponent<ShapeRect>();
+
+  for (U32 i = 0; i < 6; ++i) {
+    SPtr<Actor> playerLive = getScene().lock()->addActor("playerLive" + std::to_string(i)).lock();
+    SPtr<Transform> playerLiveT = playerLive->getTransform().lock();
+    playerLiveT->attachTo(gameMenuT);
+    playerLiveT->setLocalPosition({2.0f + i * 2.0f, 36.0f});
+    playerLiveT->setLocalScale({2.0f, 2.0f});
+    playerLive->addComponent<ShapeRect>();
+    SPtr<Render> playerLiveRender = playerLive->addComponent<Render>().lock();
+    playerLiveRender->m_material.m_pTexture = textureMan.getTexture("player_l1");
+    m_vVisualLives.push_back(playerLive);
+  }
 }
 void GameManager::makeGameOverMenu(WPtr<Transform> canvasT)
 {

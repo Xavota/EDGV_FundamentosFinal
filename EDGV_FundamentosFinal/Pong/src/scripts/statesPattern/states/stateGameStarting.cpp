@@ -11,6 +11,7 @@
 void StateGameStarting::enter(U8 lastState, WPtr<GameManager> gameManager)
 {
   gameManager.lock()->m_pGameMenu->setActive(true);
+  gameManager.lock()->m_pReadyTxt->setActive(true);
 
   if (lastState == eSTATE_INDEX::kGamePaused) return;
   
@@ -34,4 +35,5 @@ U8 StateGameStarting::update(WPtr<GameManager> gameManager)
 void StateGameStarting::exit(WPtr<GameManager> gameManager)
 {
   gameManager.lock()->m_pGameMenu->setActive(false);
+  gameManager.lock()->m_pReadyTxt->setActive(false);
 }
