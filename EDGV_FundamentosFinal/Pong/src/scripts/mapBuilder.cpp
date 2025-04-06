@@ -11,6 +11,7 @@
 #include "scripts/mapEntities/collectables/coin.h"
 #include "scripts/mapEntities/collectables/powerCoin.h"
 #include "scripts/gameMap.h"
+#include "scripts/mapTilesFactory.h"
 
 void MapBuilder::init(const WString& fileName, SPtr<GameMap> map)
 {
@@ -74,7 +75,9 @@ void MapBuilder::init(const WString& fileName, SPtr<GameMap> map)
       }
       else if (tile == '5') { // Coin
         map->m_vMapTiles[i][j] = eMAP_TILE_TYPE::kPath;
-        SPtr<Actor> tile = addTile({j, i}, "collectables_coin", map);
+        SPtr<Actor> tile = MapTilesFactory::factory(
+          getScene(), {j, i}, "collectables_coin", map->getTransform());
+        //SPtr<Actor> tile = addTile({j, i}, "collectables_coin", map);
         U32 tileCode = i * width + j;
         map->m_mCollectables[tileCode] = tile->addComponent<Coin>().lock();
         map->m_mCollectables[tileCode]->m_fpCollected = [map, tileCode] () {
@@ -83,7 +86,9 @@ void MapBuilder::init(const WString& fileName, SPtr<GameMap> map)
       }
       else if (tile == '6') { // Power Coin
         map->m_vMapTiles[i][j] = eMAP_TILE_TYPE::kPath;
-        SPtr<Actor> tile = addTile({j, i}, "collectables_powerCoin", map);
+        SPtr<Actor> tile = MapTilesFactory::factory(
+          getScene(), {j, i}, "collectables_powerCoin", map->getTransform());
+        //SPtr<Actor> tile = addTile({j, i}, "collectables_powerCoin", map);
         U32 tileCode = i * width + j;
         map->m_mCollectables[tileCode] = tile->addComponent<PowerCoin>().lock();
         map->m_mCollectables[tileCode]->m_fpCollected = [map, tileCode] () {
@@ -95,7 +100,9 @@ void MapBuilder::init(const WString& fileName, SPtr<GameMap> map)
       }
       else {
         map->m_vMapTiles[i][j] = eMAP_TILE_TYPE::kPath;
-        addTile({j, i}, "error", map);
+        MapTilesFactory::factory(
+          getScene(), {j, i}, "error", map->getTransform());
+        //addTile({j, i}, "error", map);
       }
     }
   }
@@ -144,7 +151,9 @@ void MapBuilder::placeDoubleWall(const sf::Vector2u& coord,
               neighbours[0] != eTILE_TYPE::kSingleWall) {
             //std::cout << "_uli";
             //std::cout << std::endl;
-            addTile(coord, "walls_double_swxw_uli", map);
+            SPtr<Actor> tile = MapTilesFactory::factory(
+              getScene(), coord, "walls_double_swxw_uli", map->getTransform());
+            //addTile(coord, "walls_double_swxw_uli", map);
             return;
           }
           // up right - empty
@@ -152,7 +161,9 @@ void MapBuilder::placeDoubleWall(const sf::Vector2u& coord,
               neighbours[2] != eTILE_TYPE::kSingleWall) {
             //std::cout << "_uri";
             //std::cout << std::endl;
-            addTile(coord, "walls_double_swxw_uri", map);
+            SPtr<Actor> tile = MapTilesFactory::factory(
+              getScene(), coord, "walls_double_swxw_uri", map->getTransform());
+            //addTile(coord, "walls_double_swxw_uri", map);
             return;
           }
           //std::cout << ".";
@@ -182,7 +193,9 @@ void MapBuilder::placeDoubleWall(const sf::Vector2u& coord,
               neighbours[2] != eTILE_TYPE::kSingleWall) {
             //std::cout << "_uri";
             //std::cout << std::endl;
-            addTile(coord, "walls_double_wswx_uri", map);
+            SPtr<Actor> tile = MapTilesFactory::factory(
+              getScene(), coord, "walls_double_wswx_uri", map->getTransform());
+            //addTile(coord, "walls_double_wswx_uri", map);
             return;
           }
           // down right - empty
@@ -190,7 +203,9 @@ void MapBuilder::placeDoubleWall(const sf::Vector2u& coord,
               neighbours[4] != eTILE_TYPE::kSingleWall) {
             //std::cout << "_uli";
             //std::cout << std::endl;
-            addTile(coord, "walls_double_wswx_dri", map);
+            SPtr<Actor> tile = MapTilesFactory::factory(
+              getScene(), coord, "walls_double_wswx_dri", map->getTransform());
+            //addTile(coord, "walls_double_wswx_dri", map);
             return;
           }
           //std::cout << ".";
@@ -212,7 +227,9 @@ void MapBuilder::placeDoubleWall(const sf::Vector2u& coord,
             neighbours[7] != eTILE_TYPE::kSingleWall) {
           //std::cout << "i";
           //std::cout << std::endl;
-          addTile(coord, "walls_double_wwwi", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_double_wwwi", map->getTransform());
+          //addTile(coord, "walls_double_wwwi", map);
           return;
         }
         //std::cout << ".";
@@ -226,7 +243,9 @@ void MapBuilder::placeDoubleWall(const sf::Vector2u& coord,
             neighbours[7] == eTILE_TYPE::kSingleWall) {
           //std::cout << "w";
           //std::cout << std::endl;
-          addTile(coord, "walls_double_wwiw", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_double_wwiw", map->getTransform());
+          //addTile(coord, "walls_double_wwiw", map);
           return;
         }
         //std::cout << ".";
@@ -242,7 +261,9 @@ void MapBuilder::placeDoubleWall(const sf::Vector2u& coord,
               neighbours[2] != eTILE_TYPE::kSingleWall) {
             //std::cout << "_uri";
             //std::cout << std::endl;
-            addTile(coord, "walls_double_wwxx_uri", map);
+            SPtr<Actor> tile = MapTilesFactory::factory(
+              getScene(), coord, "walls_double_wwxx_uri", map->getTransform());
+            //addTile(coord, "walls_double_wwxx_uri", map);
             return;
           }
           //std::cout << ".";
@@ -264,7 +285,9 @@ void MapBuilder::placeDoubleWall(const sf::Vector2u& coord,
             neighbours[7] == eTILE_TYPE::kSingleWall) {
           //std::cout << "w";
           //std::cout << std::endl;
-          addTile(coord, "walls_double_wiww", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_double_wiww", map->getTransform());
+          //addTile(coord, "walls_double_wiww", map);
           return;
         }
         //std::cout << ".";
@@ -286,7 +309,9 @@ void MapBuilder::placeDoubleWall(const sf::Vector2u& coord,
               neighbours[0] != eTILE_TYPE::kSingleWall) {
             //std::cout << "_uli";
             //std::cout << std::endl;
-            addTile(coord, "walls_double_wxws_uli", map);
+            SPtr<Actor> tile = MapTilesFactory::factory(
+              getScene(), coord, "walls_double_wxws_uli", map->getTransform());
+            //addTile(coord, "walls_double_wxws_uli", map);
             return;
           }
           // up right - empty
@@ -294,7 +319,9 @@ void MapBuilder::placeDoubleWall(const sf::Vector2u& coord,
               neighbours[6] != eTILE_TYPE::kSingleWall) {
             //std::cout << "_dli";
             //std::cout << std::endl;
-            addTile(coord, "walls_double_wxws_dli", map);
+            SPtr<Actor> tile = MapTilesFactory::factory(
+              getScene(), coord, "walls_double_wxws_dli", map->getTransform());
+            //addTile(coord, "walls_double_wxws_dli", map);
             return;
           }
           //std::cout << ".";
@@ -313,7 +340,9 @@ void MapBuilder::placeDoubleWall(const sf::Vector2u& coord,
               neighbours[0] != eTILE_TYPE::kSingleWall) {
             //std::cout << "_uli";
             //std::cout << std::endl;
-            addTile(coord, "walls_double_wxxw_uli", map);
+            SPtr<Actor> tile = MapTilesFactory::factory(
+              getScene(), coord, "walls_double_wxxw_uli", map->getTransform());
+            //addTile(coord, "walls_double_wxxw_uli", map);
             return;
           }
           //std::cout << ".";
@@ -341,7 +370,9 @@ void MapBuilder::placeDoubleWall(const sf::Vector2u& coord,
             neighbours[7] == eTILE_TYPE::kSingleWall) {
           //std::cout << "w";
           //std::cout << std::endl;
-          addTile(coord, "walls_double_iwww", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_double_iwww", map->getTransform());
+          //addTile(coord, "walls_double_iwww", map);
           return;
         }
         //std::cout << ".";
@@ -369,7 +400,9 @@ void MapBuilder::placeDoubleWall(const sf::Vector2u& coord,
               neighbours[4] != eTILE_TYPE::kSingleWall) {
             //std::cout << "_dri";
             //std::cout << std::endl;
-            addTile(coord, "walls_double_xwsw_dri", map);
+            SPtr<Actor> tile = MapTilesFactory::factory(
+              getScene(), coord, "walls_double_xwsw_dri", map->getTransform());
+            //addTile(coord, "walls_double_xwsw_dri", map);
             return;
           }
           // up right - empty
@@ -377,7 +410,9 @@ void MapBuilder::placeDoubleWall(const sf::Vector2u& coord,
               neighbours[6] != eTILE_TYPE::kSingleWall) {
             //std::cout << "_dli";
             //std::cout << std::endl;
-            addTile(coord, "walls_double_xwsw_dli", map);
+            SPtr<Actor> tile = MapTilesFactory::factory(
+              getScene(), coord, "walls_double_xwsw_dli", map->getTransform());
+            //addTile(coord, "walls_double_xwsw_dli", map);
             return;
           }
           //std::cout << ".";
@@ -396,7 +431,9 @@ void MapBuilder::placeDoubleWall(const sf::Vector2u& coord,
               neighbours[4] != eTILE_TYPE::kSingleWall) {
             //std::cout << "_dri";
             //std::cout << std::endl;
-            addTile(coord, "walls_double_xwwx_dri", map);
+            SPtr<Actor> tile = MapTilesFactory::factory(
+              getScene(), coord, "walls_double_xwwx_dri", map->getTransform());
+            //addTile(coord, "walls_double_xwwx_dri", map);
             return;
           }
           //std::cout << ".";
@@ -421,7 +458,9 @@ void MapBuilder::placeDoubleWall(const sf::Vector2u& coord,
               neighbours[6] != eTILE_TYPE::kSingleWall) {
             //std::cout << "_dli";
             //std::cout << std::endl;
-            addTile(coord, "walls_double_xxww_dli", map);
+            SPtr<Actor> tile = MapTilesFactory::factory(
+              getScene(), coord, "walls_double_xxww_dli", map->getTransform());
+            //addTile(coord, "walls_double_xxww_dli", map);
             return;
           }
           //std::cout << ".";
@@ -434,7 +473,9 @@ void MapBuilder::placeDoubleWall(const sf::Vector2u& coord,
   }
 
   //std::cout << std::endl;
-  addTile(coord, "error", map);
+  SPtr<Actor> tile = MapTilesFactory::factory(
+    getScene(), coord, "error", map->getTransform());
+  //addTile(coord, "error", map);
 }
 
 void MapBuilder::placeSingleWall(const sf::Vector2u& coord,
@@ -477,7 +518,9 @@ void MapBuilder::placeSingleWall(const sf::Vector2u& coord,
             neighbours[7] != eTILE_TYPE::kSingleWall) {
           //std::cout << "i";
           //std::cout << std::endl;
-          addTile(coord, "walls_single_wwwi", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_single_wwwi", map->getTransform());
+          //addTile(coord, "walls_single_wwwi", map);
           return;
         }
         //std::cout << ".";
@@ -491,7 +534,9 @@ void MapBuilder::placeSingleWall(const sf::Vector2u& coord,
             neighbours[7] == eTILE_TYPE::kSingleWall) {
           //std::cout << "w";
           //std::cout << std::endl;
-          addTile(coord, "walls_single_wwiw", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_single_wwiw", map->getTransform());
+          //addTile(coord, "walls_single_wwiw", map);
           return;
         }
         // right - empty
@@ -499,7 +544,9 @@ void MapBuilder::placeSingleWall(const sf::Vector2u& coord,
             neighbours[7] != eTILE_TYPE::kSingleWall) {
           //std::cout << "i";
           //std::cout << std::endl;
-          addTile(coord, "walls_single_wwii", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_single_wwii", map->getTransform());
+          //addTile(coord, "walls_single_wwii", map);
           return;
         }
         //std::cout << ".";
@@ -515,7 +562,9 @@ void MapBuilder::placeSingleWall(const sf::Vector2u& coord,
               neighbours[2] != eTILE_TYPE::kSingleWall) {
             //std::cout << "_uri";
             //std::cout << std::endl;
-            addTile(coord, "walls_single_wwxx_uri", map);
+            SPtr<Actor> tile = MapTilesFactory::factory(
+              getScene(), coord, "walls_single_wwxx_uri", map->getTransform());
+            //addTile(coord, "walls_single_wwxx_uri", map);
             return;
           }
           //std::cout << ".";
@@ -537,7 +586,9 @@ void MapBuilder::placeSingleWall(const sf::Vector2u& coord,
             neighbours[7] == eTILE_TYPE::kSingleWall) {
           //std::cout << "w";
           //std::cout << std::endl;
-          addTile(coord, "walls_single_wiww", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_single_wiww", map->getTransform());
+          //addTile(coord, "walls_single_wiww", map);
           return;
         }
         //std::cout << ".";
@@ -551,7 +602,9 @@ void MapBuilder::placeSingleWall(const sf::Vector2u& coord,
             neighbours[7] == eTILE_TYPE::kSingleWall) {
           //std::cout << "w";
           //std::cout << std::endl;
-          addTile(coord, "walls_single_wiiw", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_single_wiiw", map->getTransform());
+          //addTile(coord, "walls_single_wiiw", map);
           return;
         }
         //std::cout << ".";
@@ -572,7 +625,9 @@ void MapBuilder::placeSingleWall(const sf::Vector2u& coord,
               neighbours[0] != eTILE_TYPE::kSingleWall) {
             //std::cout << "_uli";
             //std::cout << std::endl;
-            addTile(coord, "walls_single_wxxw_uli", map);
+            SPtr<Actor> tile = MapTilesFactory::factory(
+              getScene(), coord, "walls_single_wxxw_uli", map->getTransform());
+            //addTile(coord, "walls_single_wxxw_uli", map);
             return;
           }
           //std::cout << ".";
@@ -600,7 +655,9 @@ void MapBuilder::placeSingleWall(const sf::Vector2u& coord,
             neighbours[7] == eTILE_TYPE::kSingleWall) {
           //std::cout << "w";
           //std::cout << std::endl;
-          addTile(coord, "walls_single_iwww", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_single_iwww", map->getTransform());
+          //addTile(coord, "walls_single_iwww", map);
           return;
         }
         // right - empty
@@ -608,7 +665,9 @@ void MapBuilder::placeSingleWall(const sf::Vector2u& coord,
             neighbours[7] != eTILE_TYPE::kSingleWall) {
           //std::cout << "i";
           //std::cout << std::endl;
-          addTile(coord, "walls_single_iwwi", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_single_iwwi", map->getTransform());
+          //addTile(coord, "walls_single_iwwi", map);
           return;
         }
         //std::cout << ".";
@@ -628,7 +687,9 @@ void MapBuilder::placeSingleWall(const sf::Vector2u& coord,
             neighbours[7] == eTILE_TYPE::kSingleWall) {
           //std::cout << "w";
           //std::cout << std::endl;
-          addTile(coord, "walls_single_iiww", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_single_iiww", map->getTransform());
+          //addTile(coord, "walls_single_iiww", map);
           return;
         }
         //std::cout << ".";
@@ -655,7 +716,9 @@ void MapBuilder::placeSingleWall(const sf::Vector2u& coord,
               neighbours[4] != eTILE_TYPE::kSingleWall) {
             //std::cout << "_dri";
             //std::cout << std::endl;
-            addTile(coord, "walls_single_xwwx_dri", map);
+            SPtr<Actor> tile = MapTilesFactory::factory(
+              getScene(), coord, "walls_single_xwwx_dri", map->getTransform());
+            //addTile(coord, "walls_single_xwwx_dri", map);
             return;
           }
           //std::cout << ".";
@@ -680,7 +743,9 @@ void MapBuilder::placeSingleWall(const sf::Vector2u& coord,
               neighbours[6] != eTILE_TYPE::kSingleWall) {
             //std::cout << "_dli";
             //std::cout << std::endl;
-            addTile(coord, "walls_single_xxww_dli", map);
+            SPtr<Actor> tile = MapTilesFactory::factory(
+              getScene(), coord, "walls_single_xxww_dli", map->getTransform());
+            //addTile(coord, "walls_single_xxww_dli", map);
             return;
           }
           //std::cout << ".";
@@ -694,7 +759,9 @@ void MapBuilder::placeSingleWall(const sf::Vector2u& coord,
 
   //std::cout << "error";
   //std::cout << std::endl;
-  addTile(coord, "error", map);
+  SPtr<Actor> tile = MapTilesFactory::factory(
+    getScene(), coord, "error", map->getTransform());
+  //addTile(coord, "error", map);
 }
 
 void MapBuilder::placePhantomSpawnWall(const sf::Vector2u& coord,
@@ -737,7 +804,9 @@ void MapBuilder::placePhantomSpawnWall(const sf::Vector2u& coord,
             neighbours[7] != eTILE_TYPE::kPhantomSpawnExit) {
           //std::cout << "o";
           //std::cout << std::endl;
-          addTile(coord, "walls_spawn_ssso", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_spawn_ssso", map->getTransform());
+          //addTile(coord, "walls_spawn_ssso", map);
           return;
         }
         //std::cout << ".";
@@ -751,7 +820,9 @@ void MapBuilder::placePhantomSpawnWall(const sf::Vector2u& coord,
             neighbours[7] == eTILE_TYPE::kPhantomSpawnExit) {
           //std::cout << "s";
           //std::cout << std::endl;
-          addTile(coord, "walls_spawn_ssos", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_spawn_ssos", map->getTransform());
+          //addTile(coord, "walls_spawn_ssos", map);
           return;
         }
         // left - out
@@ -759,7 +830,9 @@ void MapBuilder::placePhantomSpawnWall(const sf::Vector2u& coord,
             neighbours[7] != eTILE_TYPE::kPhantomSpawnExit) {
           //std::cout << "o";
           //std::cout << std::endl;
-          addTile(coord, "walls_spawn_ssoo", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_spawn_ssoo", map->getTransform());
+          //addTile(coord, "walls_spawn_ssoo", map);
           return;
         }
         //std::cout << ".";
@@ -779,7 +852,9 @@ void MapBuilder::placePhantomSpawnWall(const sf::Vector2u& coord,
             neighbours[7] == eTILE_TYPE::kPhantomSpawnExit) {
           //std::cout << "s";
           //std::cout << std::endl;
-          addTile(coord, "walls_spawn_soss", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_spawn_soss", map->getTransform());
+          //addTile(coord, "walls_spawn_soss", map);
           return;
         }
         //std::cout << ".";
@@ -793,7 +868,9 @@ void MapBuilder::placePhantomSpawnWall(const sf::Vector2u& coord,
             neighbours[7] == eTILE_TYPE::kPhantomSpawnExit) {
           //std::cout << "s";
           //std::cout << std::endl;
-          addTile(coord, "walls_spawn_soos", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_spawn_soos", map->getTransform());
+          //addTile(coord, "walls_spawn_soos", map);
           return;
         }
         //std::cout << ".";
@@ -819,7 +896,9 @@ void MapBuilder::placePhantomSpawnWall(const sf::Vector2u& coord,
             neighbours[7] == eTILE_TYPE::kPhantomSpawnExit) {
           //std::cout << "s";
           //std::cout << std::endl;
-          addTile(coord, "walls_spawn_osss", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_spawn_osss", map->getTransform());
+          //addTile(coord, "walls_spawn_osss", map);
           return;
         }
         // left - out
@@ -827,7 +906,9 @@ void MapBuilder::placePhantomSpawnWall(const sf::Vector2u& coord,
             neighbours[7] != eTILE_TYPE::kPhantomSpawnExit) {
           //std::cout << "o";
           //std::cout << std::endl;
-          addTile(coord, "walls_spawn_osso", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_spawn_osso", map->getTransform());
+          //addTile(coord, "walls_spawn_osso", map);
           return;
         }
         //std::cout << ".";
@@ -847,7 +928,9 @@ void MapBuilder::placePhantomSpawnWall(const sf::Vector2u& coord,
             neighbours[7] == eTILE_TYPE::kPhantomSpawnExit) {
           //std::cout << "s";
           //std::cout << std::endl;
-          addTile(coord, "walls_spawn_ooss", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_spawn_ooss", map->getTransform());
+          //addTile(coord, "walls_spawn_ooss", map);
           return;
         }
         //std::cout << ".";
@@ -859,7 +942,9 @@ void MapBuilder::placePhantomSpawnWall(const sf::Vector2u& coord,
 
   //std::cout << "error";
   //std::cout << std::endl;
-  addTile(coord, "error", map);
+  SPtr<Actor> tile = MapTilesFactory::factory(
+    getScene(), coord, "error", map->getTransform());
+  //addTile(coord, "error", map);
 }
 
 void MapBuilder::placePhantomSpawnExit(const sf::Vector2u& coord,
@@ -894,7 +979,9 @@ void MapBuilder::placePhantomSpawnExit(const sf::Vector2u& coord,
             neighbours[7] != eTILE_TYPE::kPhantomSpawnExit) {
           //std::cout << "o";
           //std::cout << std::endl;
-          addTile(coord, "walls_spawn_ssso_e", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_spawn_ssso_e", map->getTransform());
+          //addTile(coord, "walls_spawn_ssso_e", map);
           return;
         }
         //std::cout << ".";
@@ -908,7 +995,9 @@ void MapBuilder::placePhantomSpawnExit(const sf::Vector2u& coord,
             neighbours[7] == eTILE_TYPE::kPhantomSpawnExit) {
           //std::cout << "s";
           //std::cout << std::endl;
-          addTile(coord, "walls_spawn_ssos_e", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_spawn_ssos_e", map->getTransform());
+          //addTile(coord, "walls_spawn_ssos_e", map);
           return;
         }
         //std::cout << ".";
@@ -928,7 +1017,9 @@ void MapBuilder::placePhantomSpawnExit(const sf::Vector2u& coord,
             neighbours[7] == eTILE_TYPE::kPhantomSpawnExit) {
           //std::cout << "s";
           //std::cout << std::endl;
-          addTile(coord, "walls_spawn_soss_e", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_spawn_soss_e", map->getTransform());
+          //addTile(coord, "walls_spawn_soss_e", map);
           return;
         }
         //std::cout << ".";
@@ -954,7 +1045,9 @@ void MapBuilder::placePhantomSpawnExit(const sf::Vector2u& coord,
             neighbours[7] == eTILE_TYPE::kPhantomSpawnExit) {
           //std::cout << "s";
           //std::cout << std::endl;
-          addTile(coord, "walls_spawn_osss_e", map);
+          SPtr<Actor> tile = MapTilesFactory::factory(
+            getScene(), coord, "walls_spawn_osss_e", map->getTransform());
+          //addTile(coord, "walls_spawn_osss_e", map);
           return;
         }
         //std::cout << ".";
@@ -966,10 +1059,12 @@ void MapBuilder::placePhantomSpawnExit(const sf::Vector2u& coord,
   
   //std::cout << "error";
   //std::cout << std::endl;
-  addTile(coord, "error", map);
+  SPtr<Actor> tile = MapTilesFactory::factory(
+    getScene(), coord, "error", map->getTransform());
+  //addTile(coord, "error", map);
 }
 
-SPtr<Actor> MapBuilder::addTile(const sf::Vector2u& coord,
+/*SPtr<Actor> MapBuilder::addTile(const sf::Vector2u& coord,
                                 const String& materialName, SPtr<GameMap> map)
 {
   String tileName =
@@ -988,4 +1083,4 @@ SPtr<Actor> MapBuilder::addTile(const sf::Vector2u& coord,
    gl::TextureManager::instance().getTexture(materialName);
 
   return tile;
-}
+}*/

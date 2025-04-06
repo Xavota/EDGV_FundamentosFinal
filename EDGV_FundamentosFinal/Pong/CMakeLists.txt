@@ -6,6 +6,7 @@ add_executable(Pong
  src/scripts/gameManager.cpp
  src/scripts/gameMap.cpp
  src/scripts/mapBuilder.cpp
+ src/scripts/mapTilesFactory.cpp
  src/scripts/statesPattern/stateMachine.cpp
  src/scripts/statesPattern/states/stateGameOver.cpp
  src/scripts/statesPattern/states/stateGamePaused.cpp

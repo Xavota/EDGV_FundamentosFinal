@@ -44,6 +44,6 @@ class MapBuilder : public Script
   void placePhantomSpawnExit(const sf::Vector2u& coord, Vector<I8> neighbours,
                              SPtr<GameMap> map);
 
-  SPtr<Actor> addTile(const sf::Vector2u& coord, const String& materialName,
-                      SPtr<GameMap> map);
+  //SPtr<Actor> addTile(const sf::Vector2u& coord, const String& materialName,
+  //                    SPtr<GameMap> map);
 };
