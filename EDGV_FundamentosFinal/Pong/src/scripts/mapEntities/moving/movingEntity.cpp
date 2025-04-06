@@ -15,11 +15,55 @@ void MovingEntity::setCanMove(bool can)
 {
   m_bCanMove = can;
 }
+void MovingEntity::setPaused(bool paused)
+{
+  m_bPaused = paused;
+}
 
 void MovingEntity::move(U8 options)
 {
   m_posOffset += sf::Vector2f(m_movementDir) * m_fSpeed *
                  gl::Time::instance().deltaTime();
+
+  if (m_bWrapping) {
+    SPtr<GameMap> map = m_pGameMap.lock();
+    if (m_bEnteringWrapping) {
+      if (m_wrappingEntranceDir.y == -1 && m_posOffset.y <= -map->m_fMaxWrappingDistance ||
+          m_wrappingEntranceDir.x ==  1 && m_posOffset.x >=  map->m_fMaxWrappingDistance ||
+          m_wrappingEntranceDir.y ==  1 && m_posOffset.y >=  map->m_fMaxWrappingDistance ||
+          m_wrappingEntranceDir.x == -1 && m_posOffset.x <= -map->m_fMaxWrappingDistance) {
+        m_mapPos = m_wrappingExitPos;
+        m_bEnteringWrapping = false;
+        m_posOffset = -m_posOffset;
+      }
+      else if (m_wrappingEntranceDir.y == -1 && m_posOffset.y >=  1.0f ||
+               m_wrappingEntranceDir.x ==  1 && m_posOffset.x <= -1.0f ||
+               m_wrappingEntranceDir.y ==  1 && m_posOffset.y <= -1.0f ||
+               m_wrappingEntranceDir.x == -1 && m_posOffset.x >=  1.0f) {
+        m_bWrapping = false;
+        std::cout << "Wrapping exit " << getActor().lock()->getName() << std::endl;
+      }
+    }
+    else {
+      if (m_wrappingExitDir.y == -1 && m_posOffset.y >=  map->m_fMaxWrappingDistance ||
+          m_wrappingExitDir.x ==  1 && m_posOffset.x <= -map->m_fMaxWrappingDistance ||
+          m_wrappingExitDir.y ==  1 && m_posOffset.y <= -map->m_fMaxWrappingDistance ||
+          m_wrappingExitDir.x == -1 && m_posOffset.x >=  map->m_fMaxWrappingDistance) {
+            m_mapPos = m_wrappingEntrancePos;
+            m_bEnteringWrapping = true;
+            m_posOffset = -m_posOffset;
+      }
+      else if (m_wrappingExitDir.y == -1 && m_posOffset.y <= -1.0f ||
+               m_wrappingExitDir.x ==  1 && m_posOffset.x >=  1.0f ||
+               m_wrappingExitDir.y ==  1 && m_posOffset.y >=  1.0f ||
+               m_wrappingExitDir.x == -1 && m_posOffset.x <= -1.0f) {
+        m_bWrapping = false;
+        std::cout << "Wrapping exit " << getActor().lock()->getName() << std::endl;
+      }
+    }
+  }
+
+  if (m_bWrapping) return;
 
   if (std::abs(m_posOffset.x) > 1.0f) {
     float sign = (m_posOffset.x / std::abs(m_posOffset.x));
@@ -97,6 +141,8 @@ void MovingEntity::setAnimationFrame(const sf::Vector2i& dir, U8 frame)
 
 void MovingEntity::update()
 {
+  if (m_bPaused) return;
+
   if (m_pGameMap.expired()) return;
 
   SPtr<GameMap> map = m_pGameMap.lock();
@@ -106,6 +152,19 @@ void MovingEntity::update()
     //std::cout << "GotMovementOption " << getActor().lock()->getName() << std::endl;
 
     move(options);
+
+    if (!m_bWrapping) {
+      GameMap::WrapInfo wrapInfo = {};
+      m_bWrapping = map->isWrapping(m_mapPos, wrapInfo);
+      if (m_bWrapping) {
+        std::cout << "Wrapping enter " << getActor().lock()->getName() << std::endl;
+        m_bEnteringWrapping = true;
+        m_wrappingEntrancePos = wrapInfo.entrancePos;
+        m_wrappingExitPos = wrapInfo.exitPos;
+        m_wrappingEntranceDir = wrapInfo.entranceDir;
+        m_wrappingExitDir = wrapInfo.exitDir;
+      }
+    }
 
     options = map->getMovementOptions(m_mapPos);
     U8 decision = getMovementDecision(m_movementDir, options);

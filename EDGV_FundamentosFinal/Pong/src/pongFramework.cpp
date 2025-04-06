@@ -7,6 +7,7 @@
 #include <scene/actor.h>
 
 #include <tools/textureManager.h>
+#include <tools/fontManager.h>
 
 #include "scripts/gameManager.h"
 
@@ -16,6 +17,7 @@ void PongFramework::onInit()
   std::cout << "OnInit" << std::endl;
 
   auto& textureMan = gl::TextureManager::instance();
+  auto& fontMan = gl::FontManager::instance();
 
   Vector<Path> paths =
    File::getChildPaths(L"../Pong/resources/sprites/", true);
@@ -30,6 +32,21 @@ void PongFramework::onInit()
     std::cout << textureName << std::endl;
 
     textureMan.addTexture(textureName, p.generic_string(), sf::Color::Black);
+  }
+
+  paths.clear();
+  paths = File::getChildPaths(L"../Pong/resources/fonts/", true);
+   //File::getChildPaths(L"C:/Develop/Especialidad/Proyectos/EDGV_FundamentosFinal/EDGV_FundamentosFinal/Pong/resources/sprites/", true);
+  std::cout << "Paths count: " << paths.size() << std::endl;
+  for (const auto& p : paths) {
+    String fontName =
+     std::filesystem::relative(p, "../Pong/resources/fonts/").generic_string();
+    std::replace(fontName.begin(), fontName.end(), '/', '_');
+    fontName = fontName.substr(0, fontName.size() - 4);
+
+    std::cout << fontName << std::endl;
+
+    fontMan.addFont(fontName, p.generic_string());
   }
 
 

@@ -26,12 +26,18 @@ void FrameworkManager::run(const sf::Vector2u& size, const String& name,
 
       processEvents();
       update();
+			gl::Input::update();
     }
 
     render();
   }
 
   destroy();
+}
+
+void FrameworkManager::close()
+{
+  m_window.close();
 }
 
 void FrameworkManager::initGameWindow(const sf::Vector2u& size,
@@ -74,7 +80,7 @@ void FrameworkManager::processEvents()
       gl::Input::handleMouseInput(event->getIf<sf::Event::MouseButtonReleased>()->button, false);
     }
     else if (event->is<sf::Event::Closed>()) {
-      m_window.close();
+      close();
     }
     else {}
   }

@@ -2,7 +2,11 @@
 
 #include <platform/math.h>
 
-bool GameMap::init()
+#include <scene/actor.h>
+
+#include "scripts/mapEntities/collectable.h"
+
+bool GameMap::init(FuntionPtr<void> collectedAll)
 {
   m_bIsValid = true;
 
@@ -15,6 +19,12 @@ bool GameMap::init()
   U32 width = static_cast<U32>(m_vMapTiles[0].size());
   U32 height = static_cast<U32>(m_vMapTiles.size());
 
+
+  m_iActiveCollectables = m_mCollectables.size();
+
+  m_fpCollectedAll = collectedAll;
+
+
   bool hasWrapUp = false;
   bool hasWrapDown = false;
   bool hasWrapLeft = false;
@@ -24,7 +34,8 @@ bool GameMap::init()
     // Wrap up
     if (m_vMapTiles[0][i] == eMAP_TILE_TYPE::kPath) {
       if (hasWrapUp) {
-        std::cout << "Can't have more than one wrap points in the same side. Invalid map." << std::endl;
+        std::cout << "Can't have more than one wrap points in the same side."
+                     " Invalid map." << std::endl;
         m_bIsValid = false;
         return false;
       }
@@ -269,6 +280,14 @@ bool GameMap::init()
   return true;
 }
 
+void GameMap::restart()
+{
+  for (auto& coll : m_mCollectables) {
+    coll.second->getActor().lock()->setActive(true);
+  }
+  m_iActiveCollectables = m_mCollectables.size();
+}
+
 bool GameMap::neighbourTileIsOfType(const sf::Vector2u origin, U8 dir, U8 type) const
 {
   U32 maxWidth = static_cast<U32>(m_vMapTiles[origin.y].size()) - 1;
@@ -323,6 +342,39 @@ bool GameMap::isPath(const sf::Vector2i& coord) const
          tileType == eMAP_TILE_TYPE::kPlayerSpawn;
 }
 
+bool GameMap::isWrapping(const sf::Vector2u coord, WrapInfo& outInfo) const
+{
+  if (coord == m_wrapUpPosition) {
+    outInfo.entrancePos = m_wrapUpPosition;
+    outInfo.exitPos = m_wrapDownPosition;
+    outInfo.entranceDir = {0, -1};
+    outInfo.exitDir = {0, -1};
+    return true;
+  }
+  if (coord == m_wrapRightPosition) {
+    outInfo.entrancePos = m_wrapRightPosition;
+    outInfo.exitPos = m_wrapLeftPosition;
+    outInfo.entranceDir = {1, 0};
+    outInfo.exitDir = {1, 0};
+    return true;
+  }
+  if (coord == m_wrapDownPosition) {
+    outInfo.entrancePos = m_wrapDownPosition;
+    outInfo.exitPos = m_wrapUpPosition;
+    outInfo.entranceDir = {0, 1};
+    outInfo.exitDir = {0, 1};
+    return true;
+  }
+  if (coord == m_wrapLeftPosition) {
+    outInfo.entrancePos = m_wrapLeftPosition;
+    outInfo.exitPos = m_wrapRightPosition;
+    outInfo.entranceDir = {-1, 0};
+    outInfo.exitDir = {-1, 0};
+    return true;
+  }
+  return false;
+}
+
 void GameMap::setMapTiles(const Vector<Vector<U8>>& tiles)
 {
   m_vMapTiles = tiles;
@@ -375,4 +427,18 @@ GameMap::SpawnInfo GameMap::getPhantomSpawnInfo(U32 index) const
 
 
   return info;
+}
+
+void GameMap::collected(U32 tileCode)
+{
+  if (!m_mCollectables.contains(tileCode)) return;
+
+  m_mCollectables[tileCode]->getActor().lock()->setActive(false);
+  --m_iActiveCollectables;
+
+  std::cout << "Collected. " << m_iActiveCollectables << " left" << std::endl;
+
+  if (m_iActiveCollectables <= 0 && m_fpCollectedAll != nullptr) {
+    m_fpCollectedAll();
+  }
 }

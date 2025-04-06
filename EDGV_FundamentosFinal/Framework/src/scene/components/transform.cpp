@@ -10,6 +10,8 @@ Transform::~Transform()
 
   auto childIt = std::find_if(children.begin(), children.end(),
                               [this](WPtr<Transform> tr){
+                                if (tr.expired()) return false;
+                                
                                 SPtr<Actor> child = tr.lock()->getActor().lock();
                                 SPtr<Actor> actor = this->getActor().lock();
                                 return child->getName() == actor->getName() &&

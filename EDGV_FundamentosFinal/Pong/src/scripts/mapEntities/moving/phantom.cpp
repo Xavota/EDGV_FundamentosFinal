@@ -60,7 +60,7 @@ void Phantom::makeEatable(float time)
   m_fEatableMaxTime = time;
   m_fEatableTime = 0.0f;
 
-  m_fSpeed = m_fOgSpeed * 0.8f;
+  m_fSpeed = m_fOgSpeed * 0.65f;
 }
 
 void Phantom::makeNotEatable()
@@ -90,11 +90,14 @@ void Phantom::reset()
   m_posOffset = m_ogPosOffset;
 
   m_bIsBeenEaten = false;
+
+  SPtr<Transform> transform = getTransform().lock();
+  transform->setLocalPosition(static_cast<sf::Vector2f>(m_mapPos) + m_posOffset);
 }
 
 U8 Phantom::getMovementDecision(const sf::Vector2i& dir, U8 options)
 {
-  if (m_bIsBeenEaten || options == 0 || m_lastPos == m_mapPos) return 0;
+  if (m_bWrapping || m_bIsBeenEaten || options == 0 || m_lastPos == m_mapPos) return 0;
 
   m_lastPos = m_mapPos;
 
@@ -261,11 +264,13 @@ void Phantom::onCollisionEnter(CollisionInfo info)
 {
   WPtr<Player> player = info.otherActor.lock()->getComponent<Player>();
   if (!player.expired()) {
-    if (m_bIsEatable && !m_bIsBeenEaten) {
-      player.lock()->eatPhantom();
-      eaten();
+    if (!m_bIsBeenEaten) {
+      if (m_bIsEatable) {
+        player.lock()->eatPhantom();
+        eaten();
+      }
+      else player.lock()->dead();
     }
-    else if (!m_bIsEatable) player.lock()->dead();
     
     //getScene().lock()->destroyActor(getActor());
     //getActor().lock()->setActive(false);
@@ -276,8 +281,10 @@ void Phantom::onCollisionEnter(CollisionInfo info)
 void Phantom::update()
 {
   MovingEntity::update();
+  
+  if (m_bPaused) return;
 
-  if (m_bIsEatable) {
+  if (m_bIsEatable && m_bCanMove) {
     m_fEatableTime += gl::Time::instance().deltaTime();
 
     setAnimationFrame(m_movementDir, m_iCurrentAnimationFrame);

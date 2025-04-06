@@ -128,10 +128,12 @@ class Transform : public Component
    * @brief  Returns the parent of the transform.
    */
   WPtr<Transform> getParent() const { return m_pParent; }
+  /**
+   * @brief  Returns the children of the transform.
+   */
+  const Vector<WPtr<Transform>>& getChildren() const { return m_vChildren; }
 
  private:
-  friend class Scene;
-
   /**
    * The position of the actor.
    */

@@ -3,12 +3,14 @@
 #include <tools/time.h>
 #include <tools/input.h>
 
+#include <scene/actor.h>
+
 #include "scripts/gameManager.h"
 #include "scripts/statesPattern/stateMachine.h"
 
 void StateMainMenu::enter(U8 lastState, WPtr<GameManager> gameManager)
 {
-  // Open main menu
+  gameManager.lock()->m_pMainMenu->setActive(true);
 }
 
 U8 StateMainMenu::update(WPtr<GameManager> gameManager)
@@ -19,6 +21,7 @@ U8 StateMainMenu::update(WPtr<GameManager> gameManager)
 U8 StateMainMenu::externalInput(U8 input, WPtr<GameManager> gameManager)
 {
   if (input == eEXTERNAL_INPUT::kStartGame) {
+    gameManager.lock()->newGame();
     return eSTATE_INDEX::kGameStarting;
   }
   return 0;
@@ -26,5 +29,5 @@ U8 StateMainMenu::externalInput(U8 input, WPtr<GameManager> gameManager)
 
 void StateMainMenu::exit(WPtr<GameManager> gameManager)
 {
-  // Close main menu
+  gameManager.lock()->m_pMainMenu->setActive(false);
 }

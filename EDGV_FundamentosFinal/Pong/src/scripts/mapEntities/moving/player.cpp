@@ -41,6 +41,8 @@ void Player::init(WPtr<GameMap> map, float speed,
   m_bCollectedCoinStep = false;
   m_bDead = false;
 
+  m_iLives = m_iOgLives;
+
   m_iMaxAnimationFrames = 3;
 
   //std::cout << "initial m_posOffset(" << m_posOffset.x << ", " << m_posOffset.y << ")" << std::endl;
@@ -54,10 +56,11 @@ void Player::init(WPtr<GameMap> map, float speed,
   m_pRenderComp->m_material.m_pTexture =
    gl::TextureManager::instance().getTexture("player_l2");
   SPtr<Transform> transform = getTransform().lock();
-  transform->setLocalPosition(static_cast<sf::Vector2f>(m_mapPos));
+  transform->setLocalPosition(static_cast<sf::Vector2f>(m_mapPos) + m_posOffset);
   transform->setLocalScale({2.0f, 2.0f});
   SPtr<RectCollider> rectCollider = actor->addComponent<RectCollider>().lock();
   rectCollider->scale = {0.4f, 0.4f};
+  //rectCollider->render = true;
 }
 
 
@@ -81,7 +84,7 @@ void Player::collectedPowerCoin()
 
 void Player::dead()
 {
-  std::cout << "dead" << std::endl;
+  if (m_bDead) return;
 
   m_bDead = true;
   m_bCanMove = false;
@@ -92,6 +95,10 @@ void Player::dead()
 
   m_fTimeToStartDeadAnimation = 0.0f;
   m_fTimeToFinishDeadAnimation = 0.0f;
+
+  --m_iLives;
+
+  std::cout << "dead. current lives: " << m_iLives << std::endl;
 
   if (m_fpDied == nullptr) return;
   m_fpDied();
@@ -114,7 +121,12 @@ void Player::reset()
   m_bCollectedCoinStep = false;
   m_bDead = false;
 
+  m_iCurrentAnimationFrame = 0;
+  m_iCurrentFrameTime = 0.0f;
   m_iMaxAnimationFrames = 3;
+
+  SPtr<Transform> transform = getTransform().lock();
+  transform->setLocalPosition(static_cast<sf::Vector2f>(m_mapPos) + m_posOffset);
 
   m_pRenderComp->m_material.m_pTexture =
    gl::TextureManager::instance().getTexture("player_l2");
@@ -205,6 +217,11 @@ void Player::move(U8 options)
 
 void Player::update()
 {
+  if (m_bPaused) {
+    MovingEntity::update();
+    return;
+  }
+
   if (m_bDead) {
     if (m_fTimeToStartDeadAnimation >= m_fMaxTimeToStartDeadAnimation) {
       if (m_iCurrentAnimationFrame == 11) {

@@ -11,7 +11,7 @@ void Actor::setActive(const bool active)
 {
   m_bActive = active;
 
-  if (m_bActive && !m_bIsStarted) {
+  if (m_bActive) {
     start();
   }
 }
@@ -30,22 +30,51 @@ void Actor::init(const String& name, int sceneHashIndex)
 }
 
 void Actor::start() {
-  m_bIsStarted = true;
+  if (!isActive()) return;
 
+  m_bIsStarted = true;
   for (auto& cmp : m_vComponents) {
-    if (cmp->getType() == eCOMPONENT_TYPE::kScript && cmp->getActive())
-      MemoryManager::sharedReinterpretCast<Script>(cmp)->start();
+    if (!cmp->getActive() || cmp->getType() != eCOMPONENT_TYPE::kScript) continue;
+
+    SPtr<Script> scr = MemoryManager::sharedReinterpretCast<Script>(cmp);
+    if (scr->m_bIsStarted) continue;
+
+    scr->start();
+    scr->m_bIsStarted = true;
+  }
+
+  auto& children = getTransform().lock()->getChildren();
+  for (auto& transform : children) {
+    transform.lock()->getActor().lock()->start();
   }
 }
 
 void Actor::update()
 {
-  if (!m_bIsStarted) return;
+  if (!m_bActive) return;
+  
+  if (!m_bIsStarted) {
+    start();
+    return;
+  }
 
   for (auto& cmp : m_vComponents) {
-    if (cmp->getActive()){
-      cmp->update();
+    if (!cmp->getActive()) continue;
+
+    if (cmp->getType() == eCOMPONENT_TYPE::kScript){
+      SPtr<Script> scr = MemoryManager::sharedReinterpretCast<Script>(cmp);
+      if (!scr->m_bIsStarted) {
+        scr->start();
+        scr->m_bIsStarted = true;
+      }
     }
+
+    cmp->update();
+  }
+
+  auto& children = getTransform().lock()->getChildren();
+  for (auto& transform : children) {
+    transform.lock()->getActor().lock()->update();
   }
 }
 

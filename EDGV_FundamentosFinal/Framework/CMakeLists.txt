@@ -11,6 +11,7 @@ add_library(Framework STATIC
   src/scene/scene.cpp
   src/scene/sceneManager.cpp
   src/scene/components/transform.cpp
+  src/scene/components/button.cpp
   src/tools/fontManager.cpp
   src/tools/input.cpp
   src/tools/textureManager.cpp

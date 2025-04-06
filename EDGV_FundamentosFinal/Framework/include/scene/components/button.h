@@ -31,5 +31,16 @@ class Button : public Component
     return CmpType;
   }
 
+  void update() override;
+
   FuntionPtr<void> m_fpOnClick;
+  FuntionPtr<void> m_fpOnClickContinue;
+  FuntionPtr<void> m_fpOnClickStops;
+  FuntionPtr<void> m_fpOnMouseEnter;
+  FuntionPtr<void> m_fpOnHovered;
+  FuntionPtr<void> m_fpOnMouseExit;
+
+ private:
+  bool m_bMouseOver = false;
+  bool m_bBeingClicked = false;
 };

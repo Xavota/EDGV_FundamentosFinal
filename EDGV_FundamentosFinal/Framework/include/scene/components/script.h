@@ -33,8 +33,6 @@ class Script : public Component {
   }
 
  protected:
-  friend class Actor;
-
   /**
    * @brief  The start of the life of this script in the scene.
    * @bug    No know Bugs
@@ -87,4 +85,12 @@ class Script : public Component {
    * @bug    No know Bugs
    */
   virtual void onCollisionExit(CollisionInfo info) {}
+
+ private:
+  friend class Actor;
+
+  /**
+   * @brief If this actor has started its lifetime.
+   */
+   bool m_bIsStarted = false;
 };

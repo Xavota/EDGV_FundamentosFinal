@@ -3,11 +3,15 @@
 #include <tools/time.h>
 #include <tools/input.h>
 
+#include <scene/actor.h>
+
 #include "scripts/gameManager.h"
 #include "scripts/statesPattern/stateMachine.h"
 
 void StateGameStarting::enter(U8 lastState, WPtr<GameManager> gameManager)
 {
+  gameManager.lock()->m_pGameMenu->setActive(true);
+
   if (lastState == eSTATE_INDEX::kGamePaused) return;
   
   m_fTimeToStart = 0.0f;
@@ -25,4 +29,9 @@ U8 StateGameStarting::update(WPtr<GameManager> gameManager)
   }
 
   return 0;
+}
+
+void StateGameStarting::exit(WPtr<GameManager> gameManager)
+{
+  gameManager.lock()->m_pGameMenu->setActive(false);
 }

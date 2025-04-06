@@ -18,6 +18,7 @@ class MovingEntity : public Script
   virtual ~MovingEntity() = default;
 
   virtual void setCanMove(bool can);
+  virtual void setPaused(bool paused);
 
  protected:
   virtual U8 getMovementDecision(const sf::Vector2i& dir, U8 options) { return 0; };
@@ -44,10 +45,18 @@ class MovingEntity : public Script
   sf::Vector2f m_ogPosOffset;
 
   bool m_bCanMove = false;
+  bool m_bPaused = false;
 
   SPtr<Render> m_pRenderComp;
   U32 m_iMaxAnimationFrames = 3;
   U32 m_iCurrentAnimationFrame = 0;
   float m_fMaxFrameTime = 0.08f;
   float m_iCurrentFrameTime = 0.0f;
+
+  bool m_bWrapping = false;
+  bool m_bEnteringWrapping = false;
+  sf::Vector2u m_wrappingEntrancePos;
+  sf::Vector2u m_wrappingExitPos;
+  sf::Vector2i m_wrappingEntranceDir;
+  sf::Vector2i m_wrappingExitDir;
 };

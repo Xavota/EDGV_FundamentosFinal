@@ -8,8 +8,8 @@
 #include <scene/components/shapeRect.h>
 #include <scene/components/render.h>
 
-#include "scripts/mapEntities/coin.h"
-#include "scripts/mapEntities/powerCoin.h"
+#include "scripts/mapEntities/collectables/coin.h"
+#include "scripts/mapEntities/collectables/powerCoin.h"
 #include "scripts/gameMap.h"
 
 void MapBuilder::init(const WString& fileName, SPtr<GameMap> map)
@@ -75,12 +75,20 @@ void MapBuilder::init(const WString& fileName, SPtr<GameMap> map)
       else if (tile == '5') { // Coin
         map->m_vMapTiles[i][j] = eMAP_TILE_TYPE::kPath;
         SPtr<Actor> tile = addTile({j, i}, "collectables_coin", map);
-        tile->addComponent<Coin>();
+        U32 tileCode = i * width + j;
+        map->m_mCollectables[tileCode] = tile->addComponent<Coin>().lock();
+        map->m_mCollectables[tileCode]->m_fpCollected = [map, tileCode] () {
+          map->collected(tileCode);
+        };
       }
       else if (tile == '6') { // Power Coin
         map->m_vMapTiles[i][j] = eMAP_TILE_TYPE::kPath;
         SPtr<Actor> tile = addTile({j, i}, "collectables_powerCoin", map);
-        tile->addComponent<PowerCoin>();
+        U32 tileCode = i * width + j;
+        map->m_mCollectables[tileCode] = tile->addComponent<PowerCoin>().lock();
+        map->m_mCollectables[tileCode]->m_fpCollected = [map, tileCode] () {
+          map->collected(tileCode);
+        };
       }
       else if (tile == '7') { // Player Spawn
         map->m_vMapTiles[i][j] = eMAP_TILE_TYPE::kPlayerSpawn;

@@ -1,4 +1,4 @@
-#include "scripts/mapEntities/coin.h"
+#include "scripts/mapEntities/collectable.h"
 
 #include <platform/memoryManager.hpp>
 #include <scene/actor.h>
@@ -8,19 +8,20 @@
 
 #include "scripts/mapEntities/moving/player.h"
 
-void Coin::start()
+void Collectable::start()
 {
   SPtr<RectCollider> rectCollider = getActor().lock()->addComponent<RectCollider>().lock();
   rectCollider->scale = {0.8f, 0.8f};
+  //rectCollider->render = true;
 }
 
-void Coin::onCollisionEnter(CollisionInfo info)
+void Collectable::onCollisionEnter(CollisionInfo info)
 {
   WPtr<Player> player = info.otherActor.lock()->getComponent<Player>();
   if (!player.expired()) {
-    player.lock()->collectedCoin();
+    onCollected(player);
+    if (m_fpCollected != nullptr) m_fpCollected();
+    //getActor().lock()->setActive(false);
     //getScene().lock()->destroyActor(getActor());
-    getActor().lock()->setActive(false);
-    //std::cout << "End collision" << std::endl;
   }
 }

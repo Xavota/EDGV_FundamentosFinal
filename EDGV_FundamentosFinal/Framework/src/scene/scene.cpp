@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "frameworkManager.h"
+
 #include "platform/memoryManager.hpp"
 #include "platform/math.h"
 
@@ -24,9 +26,9 @@ WPtr<Actor> Scene::addActor(const String& name)
   m_mActors[newName]->init(internalName, m_iActorsHashIndex);
   m_mActors[newName]->m_pScene = shared_from_this();
 
-  if (m_bIsActive) {
+  /*if (m_bIsActive) {
     m_mActors[newName]->start();
-  }
+  }*/
 
   ++m_iActorsHashIndex;
 
@@ -73,7 +75,7 @@ void Scene::init()
 void Scene::start()
 {
   for (auto& actor : m_mActors) {
-    if (!actor.second->isActive()) continue;
+    if (!actor.second->getTransform().lock()->getParent().expired()) continue;
 
     actor.second->start();
   }
@@ -91,7 +93,7 @@ void Scene::update()
   checkCollisions();
 
   for (auto& actor : m_mActors) {
-    if (!actor.second->isActive()) continue;
+    if (!actor.second->getTransform().lock()->getParent().expired()) continue;
 
     actor.second->update();
   }
@@ -116,9 +118,11 @@ void Scene::addRenderingActorsRecursive(SPtr<Actor> rootActor,
   WPtr<Render> renderComp = rootActor->getComponent<Render>();
   WPtr<ShapeRect> rectComp = rootActor->getComponent<ShapeRect>();
   WPtr<ShapeCircle> circleComp = rootActor->getComponent<ShapeCircle>();
+  WPtr<UIText> textComp = rootActor->getComponent<UIText>();
   if ((!renderComp.expired() && renderComp.lock()->getActive()) &&
      ((!rectComp.expired() && rectComp.lock()->getActive()) ||
-      (!circleComp.expired() && circleComp.lock()->getActive()))) {
+      (!circleComp.expired() && circleComp.lock()->getActive()) ||
+      (!textComp.expired() && textComp.lock()->getActive()))) {
     int renderIndex = renderComp.lock()->m_iRenderIndex;
     if (renderingActors.find(renderIndex) == renderingActors.end()) {
       renderingActors[renderIndex] = {};
@@ -126,7 +130,7 @@ void Scene::addRenderingActorsRecursive(SPtr<Actor> rootActor,
     renderingActors[renderIndex].push_back(rootActor);
   }
 
-  auto& children = rootActor->getTransform().lock()->m_vChildren;
+  auto& children = rootActor->getTransform().lock()->getChildren();
   for (auto& transform : children) {
     addRenderingActorsRecursive(transform.lock()->getActor().lock(), renderingActors);
   }
@@ -135,6 +139,8 @@ void Scene::addRenderingActorsRecursive(SPtr<Actor> rootActor,
 void Scene::render(sf::RenderWindow* window) const
 {
   if (nullptr == window) return;
+  
+  auto& framework = FrameworkManager::instance();
 
   sf::RectangleShape rectangleShape;
   sf::CircleShape circleShape;
@@ -144,12 +150,12 @@ void Scene::render(sf::RenderWindow* window) const
     rectangleShape.setSize({1.0f, 1024.0f});
     rectangleShape.setFillColor(sf::Color(50, 50, 50));
     for (int i = 0; i < 100; ++i) {
-      rectangleShape.setPosition({m_fPixelToMeterSize * i, 0.0f});
+      rectangleShape.setPosition({framework.m_fPixelToMeterSize * i, 0.0f});
       window->draw(rectangleShape);
     }
     rectangleShape.setSize({1024.0f, 1.0f});
     for (int i = 0; i < 100; ++i) {
-      rectangleShape.setPosition({0.0f, m_fPixelToMeterSize * i});
+      rectangleShape.setPosition({0.0f, framework.m_fPixelToMeterSize * i});
       window->draw(rectangleShape);
     }
   }
@@ -157,7 +163,7 @@ void Scene::render(sf::RenderWindow* window) const
 
   Map<int, Vector<SPtr<Actor>>> renderingActors;
   for (auto& actor : m_mActors) {
-    if (!actor.second->getTransform().lock()->m_pParent.expired()) continue;
+    if (!actor.second->getTransform().lock()->getParent().expired()) continue;
 
     if (!actor.second->getComponent<Canvas>().expired()) continue;
 
@@ -171,9 +177,9 @@ void Scene::render(sf::RenderWindow* window) const
       WPtr<ShapeRect> rectComp = actor->getComponent<ShapeRect>();
       WPtr<ShapeCircle> circleComp = actor->getComponent<ShapeCircle>();
   
-      sf::Vector2f pos = transform->getPosition() * m_fPixelToMeterSize;
+      sf::Vector2f pos = transform->getPosition() * framework.m_fPixelToMeterSize;
       sf::Angle rot = transform->getRotation();
-      sf::Vector2f scale = transform->getScale() * m_fPixelToMeterSize;
+      sf::Vector2f scale = transform->getScale() * framework.m_fPixelToMeterSize;
   
       if (!rectComp.expired()) {
         rectangleShape.setPosition(pos);
@@ -229,6 +235,10 @@ void Scene::render(sf::RenderWindow* window) const
 
 void Scene::renderUI(sf::RenderWindow* window) const
 {
+  if (nullptr == window) return;
+
+  auto& framework = FrameworkManager::instance();
+
   sf::RectangleShape rectangleShape;
   sf::CircleShape circleShape;
 
@@ -249,7 +259,7 @@ void Scene::renderUI(sf::RenderWindow* window) const
 
     SPtr<Transform> transform = actor.second->getComponent<Transform>().lock();
     sf::Angle rot = transform->getRotation();
-    sf::Vector2f scale = transform->getScale() * m_fPixelToMeterSize;
+    sf::Vector2f scale = transform->getScale() * framework.m_fPixelToMeterSize;
 
     if (!rectColl.expired() &&
          rectColl.lock()->getActive() &&
@@ -288,7 +298,7 @@ void Scene::renderUI(sf::RenderWindow* window) const
 
       sf::Vector2f offset = cCollider->offset;
       sf::Vector2f newPos =
-       transform->getModelMatrix().transform(offset) * m_fPixelToMeterSize;
+       transform->getModelMatrix().transform(offset) * framework.m_fPixelToMeterSize;
 
        float cScaleRadius = cCollider->scaleRadius;
        float radius = std::max(scale.x, scale.y) * cScaleRadius;
@@ -309,7 +319,7 @@ void Scene::renderUI(sf::RenderWindow* window) const
 
   Map<int, Vector<SPtr<Actor>>> renderingActors;
   for (auto& actor : m_mActors) {
-    if (!actor.second->getTransform().lock()->m_pParent.expired()) continue;
+    if (!actor.second->getTransform().lock()->getParent().expired()) continue;
 
     if (actor.second->getComponent<Canvas>().expired()) continue;
 
@@ -324,9 +334,9 @@ void Scene::renderUI(sf::RenderWindow* window) const
       WPtr<ShapeCircle> circleComp = actor->getComponent<ShapeCircle>();
       WPtr<UIText> textComp = actor->getComponent<UIText>();
   
-      sf::Vector2f pos = transform->getPosition() * m_fPixelToMeterSize;
+      sf::Vector2f pos = transform->getPosition() * framework.m_fPixelToMeterSize;
       sf::Angle rot = transform->getRotation();
-      sf::Vector2f scale = transform->getScale() * m_fPixelToMeterSize;
+      sf::Vector2f scale = transform->getScale() * framework.m_fPixelToMeterSize;
   
       if (!rectComp.expired()) {
         rectangleShape.setPosition(pos);
@@ -380,10 +390,11 @@ void Scene::renderUI(sf::RenderWindow* window) const
         SPtr<UIText> text = textComp.lock();
         sf::Text uiText(*text->m_pFont, text->m_sText, text->m_iFontSize);
         uiText.setPosition(pos);
-        uiText.setOrigin(scale * 0.5f);
         uiText.setRotation(rot);
+        uiText.setOrigin(scale * 0.5f);
+        //uiText.setOrigin(uiText.getLocalBounds().size * 0.5f);
 
-        uiText.setFillColor(text->m_color);
+        uiText.setFillColor(renderComp->m_material.m_color);
   
         window->draw(uiText);
       }
@@ -493,6 +504,8 @@ bool Scene::checkCircleToCircleCollision(SPtr<CircleCollider> cCollider,
 
 void Scene::checkCollisions() const
 {
+  auto& framework = FrameworkManager::instance();
+
   Vector<SPtr<Collider>> colliders = {};
 
   for (auto& actor : m_mActors) {
@@ -506,14 +519,14 @@ void Scene::checkCollisions() const
      actor.second->getComponent<CircleCollider>();
 
     SPtr<Transform> transform = actor.second->getComponent<Transform>().lock();
-    sf::Vector2f scale = transform->getScale() * m_fPixelToMeterSize;
+    sf::Vector2f scale = transform->getScale() * framework.m_fPixelToMeterSize;
 
     if (!rectColl.expired() && rectColl.lock()->getActive()) {
       SPtr<RectCollider> rCollider = rectColl.lock();
 
       sf::Vector2f offset = rCollider->offset;
       sf::Vector2f newPos =
-       transform->getModelMatrix().transform(offset) * m_fPixelToMeterSize;
+       transform->getModelMatrix().transform(offset) * framework.m_fPixelToMeterSize;
 
       sf::Vector2f cScale = rCollider->scale;
       sf::Vector2f newScale = {scale.x * cScale.x, scale.y * cScale.y};
@@ -530,7 +543,7 @@ void Scene::checkCollisions() const
 
       sf::Vector2f offset = cCollider->offset;
       sf::Vector2f newPos =
-       transform->getModelMatrix().transform(offset) * m_fPixelToMeterSize;
+       transform->getModelMatrix().transform(offset) * framework.m_fPixelToMeterSize;
 
       cCollider->m_lastGlobalPosition = cCollider->m_currentGlobalPosition;
       cCollider->m_currentGlobalPosition = newPos;

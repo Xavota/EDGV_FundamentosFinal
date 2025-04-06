@@ -3,6 +3,7 @@
 #include <scene/components/script.h>
 
 class GameMap;
+class StateMachine;
 class Player;
 class Blinky;
 class Pinky;
@@ -21,19 +22,37 @@ class GameManager : public Script, public EnableSPtrFromThis<GameManager>
    */
   ~GameManager() = default;
 
+  void newGame();
   void prepareGame();
   void startPlaying();
   void pause();
   void resume();
+  void resetMovingObj();
+
+  bool isGameOver();
+
+  SPtr<GameMap> m_pGameMap;
+  SPtr<StateMachine> m_pStateMachine;
+
+  SPtr<Actor> m_pMainMenu;
+  SPtr<Actor> m_pPauseMenu;
+  SPtr<Actor> m_pGameMenu;
+  SPtr<Actor> m_pGameOverMenu;
+  SPtr<Actor> m_pGameWonMenu;
 
  private:
   void start() override;
 
   void eatablePhantoms();
   void playerDied();
-  void resetGame();
 
-  SPtr<GameMap> m_pGameMap;
+
+  void makeMainMenu(WPtr<Transform> canvasT);
+  void makePauseMenu(WPtr<Transform> canvasT);
+  void makeGameMenu(WPtr<Transform> canvasT);
+  void makeGameOverMenu(WPtr<Transform> canvasT);
+  void makeGameWonMenu(WPtr<Transform> canvasT);
+
 
   SPtr<Player> m_pPlayer;
   SPtr<Blinky> m_pBlinky;

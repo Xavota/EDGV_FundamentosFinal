@@ -1,8 +1,8 @@
 #pragma once
 
-#include <scene/components/script.h>
+#include "scripts/mapEntities/collectable.h"
 
-class Coin : public Script
+class Coin : public Collectable
 {
  public:
   /**
@@ -14,8 +14,6 @@ class Coin : public Script
    */
   ~Coin() = default;
 
- private:
-  void start() override;
-
-  void onCollisionEnter(CollisionInfo info) override;
+ protected:
+  void onCollected(WPtr<Player> player) override;
 };

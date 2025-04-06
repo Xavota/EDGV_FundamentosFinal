@@ -1,8 +1,8 @@
 #pragma once
 
-#include <scene/components/script.h>
+#include "scripts/mapEntities/collectable.h"
 
-class PowerCoin : public Script
+class PowerCoin : public Collectable
 {
  public:
   /**
@@ -14,8 +14,6 @@ class PowerCoin : public Script
    */
   ~PowerCoin() = default;
 
- private:
-  void start() override;
-
-  void onCollisionEnter(CollisionInfo info) override;
+ protected:
+  void onCollected(WPtr<Player> player) override;
 };

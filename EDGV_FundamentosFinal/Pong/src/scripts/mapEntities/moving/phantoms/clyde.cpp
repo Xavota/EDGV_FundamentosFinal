@@ -11,3 +11,11 @@ void Clyde::init(WPtr<GameMap> map, float speed, U8 phantomIndex)
   m_pRenderComp->m_material.m_pTexture =
    gl::TextureManager::instance().getTexture("phantoms_clyde_l0");
 }
+
+void Clyde::reset()
+{
+  Phantom::reset();
+
+  m_pRenderComp->m_material.m_pTexture =
+   gl::TextureManager::instance().getTexture("phantoms_clyde_l0");
+}

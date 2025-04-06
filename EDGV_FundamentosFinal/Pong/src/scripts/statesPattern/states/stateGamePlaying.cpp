@@ -27,7 +27,13 @@ U8 StateGamePlaying::update(WPtr<GameManager> gameManager)
 U8 StateGamePlaying::externalInput(U8 input, WPtr<GameManager> gameManager)
 {
   if (input == eEXTERNAL_INPUT::kPlayerDied) {
-    return eSTATE_INDEX::kGameOver;
+    if (gameManager.lock()->isGameOver()) {
+      return eSTATE_INDEX::kGameOver;
+    }
+    else {
+      gameManager.lock()->resetMovingObj();
+      return eSTATE_INDEX::kGameStarting;
+    }
   }
   else if (input == eEXTERNAL_INPUT::kGotLastCoin) {
     return eSTATE_INDEX::kGameWon;

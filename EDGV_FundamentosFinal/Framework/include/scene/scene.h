@@ -131,11 +131,6 @@ class Scene : public EnableSPtrFromThis<Scene> {
   */
   int m_iActorsHashIndex = 0;
 
- /**
-  * @brief The size in pixels a meter is in this scene.
-  */
-  float m_fPixelToMeterSize = 24.0f;
-
   /**
    * @brief If the scene should render its debug grid, to show the unit size.
    */

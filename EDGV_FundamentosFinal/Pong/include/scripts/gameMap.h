@@ -2,6 +2,8 @@
 
 #include <scene/components/script.h>
 
+class Collectable;
+
 namespace eMAP_TILE_TYPE
 {
   enum E : U8
@@ -47,16 +49,31 @@ class GameMap : public Script
     sf::Vector2f posOffset;
   };
 
+  struct WrapInfo
+  {
+    sf::Vector2u entrancePos;
+    sf::Vector2u exitPos;
+    sf::Vector2i entranceDir;
+    sf::Vector2i exitDir;
+  };
 
-  bool init();
+
+  const float m_fMaxWrappingDistance = 3.0f;
+
+
+  bool init(FuntionPtr<void> collectedAll);
+  void restart();
 
   virtual bool neighbourTileIsOfType(const sf::Vector2u origin, U8 dir, U8 type) const;
 
   virtual U8 getMovementOptions(const sf::Vector2u& coord) const;
   virtual bool isPath(const sf::Vector2i& coord) const;
+  virtual bool isWrapping(const sf::Vector2u coord, WrapInfo& outInfo) const;
 
   virtual SpawnInfo getPlayerSpawnInfo() const;
   virtual SpawnInfo getPhantomSpawnInfo(U32 index) const;
+
+  virtual void collected(U32 tileCode);
 
  private:
   friend class MapBuilder;
@@ -67,6 +84,10 @@ class GameMap : public Script
   void setMapTiles(const Vector<Vector<U8>>& tiles);
 
   Vector<Vector<U8>> m_vMapTiles;
+  Map<U32, SPtr<Collectable>> m_mCollectables;
+  U32 m_iActiveCollectables = 0;
+
+  FuntionPtr<void> m_fpCollectedAll = nullptr;
 
   sf::Vector2u m_wrapUpPosition = {};
   sf::Vector2u m_wrapDownPosition = {};

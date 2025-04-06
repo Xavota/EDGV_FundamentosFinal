@@ -32,6 +32,8 @@ class Player : public MovingEntity
   void reset();
 
  private:
+  friend class GameManager;
+
   U8 getMovementDecision(const sf::Vector2i& dir, U8 options) override;
 
   String getAnimationName() const override { return "player"; }
@@ -59,4 +61,7 @@ class Player : public MovingEntity
   float m_fMaxTimeToFinishDeadAnimation = 1.0f;
 
   sf::Vector2u m_lastPos;
+
+  U32 m_iOgLives = 2;
+  U32 m_iLives;
 };

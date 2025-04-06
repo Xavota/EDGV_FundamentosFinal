@@ -28,6 +28,16 @@ class FrameworkManager : public Module<FrameworkManager> {
            const String& name = "sfmlWindow",
            const bool windowed = true);
 
+  /**
+   * @brief  Return the current game window.
+   */
+  FORCEINLINE sf::RenderWindow* getGameWindow() { return &m_window; }
+
+  /**
+   * @brief  Close the game.
+   */
+  void close();
+
  protected:
   /**
    * @brief  Init function to inherit.
@@ -91,6 +101,10 @@ class FrameworkManager : public Module<FrameworkManager> {
   void destroy();
 
  protected:
+  friend class SceneManager;
+  friend class Scene;
+  friend class Button;
+
   /**
    * @brief  The game window where everything will be displayed and captures
    *         the game events.
@@ -100,4 +114,9 @@ class FrameworkManager : public Module<FrameworkManager> {
    * @brief  The fixed time that each logical frame has in between.
    */
   sf::Time m_timePerFrame = sf::seconds(1.f / 60.f);
+
+  /**
+   * @brief The size in pixels a meter is in this scene.
+   */
+   float m_fPixelToMeterSize = 24.0f;
 };

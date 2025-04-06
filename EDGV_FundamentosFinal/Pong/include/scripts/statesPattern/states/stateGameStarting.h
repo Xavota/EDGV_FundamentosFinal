@@ -16,10 +16,9 @@ class StateGameStarting : public State
 
   void enter(U8 lastState, WPtr<GameManager> gameManager) override;
   U8 update(WPtr<GameManager> gameManager) override;
-
-  
+  void exit(WPtr<GameManager> gameManager) override;
 
  private:
-  float m_fMaxTimeToStart = 5.0f;
+  float m_fMaxTimeToStart = 3.0f;
   float m_fTimeToStart = 0.0f;
 };

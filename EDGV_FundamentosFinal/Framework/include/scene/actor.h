@@ -180,7 +180,7 @@ class Actor : public EnableSPtrFromThis<Actor> {
   /**
    * @brief If this actor has started its lifetime.
    */
-   bool m_bIsStarted;
+   bool m_bIsStarted = false;
 
   /**
    * @brief The list of components.

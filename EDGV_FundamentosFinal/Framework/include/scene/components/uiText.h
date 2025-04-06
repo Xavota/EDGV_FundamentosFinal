@@ -34,5 +34,4 @@ class UIText : public Component
   String m_sText = "";
   sf::Font* m_pFont = nullptr;
   U32 m_iFontSize = 30u;
-  sf::Color m_color = sf::Color::White;
 };

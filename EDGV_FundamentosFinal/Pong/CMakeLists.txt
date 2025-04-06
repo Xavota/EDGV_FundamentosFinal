@@ -6,8 +6,18 @@ add_executable(Pong
  src/scripts/gameManager.cpp
  src/scripts/gameMap.cpp
  src/scripts/mapBuilder.cpp
- src/scripts/mapEntities/coin.cpp
- src/scripts/mapEntities/powerCoin.cpp
+ src/scripts/statesPattern/stateMachine.cpp
+ src/scripts/statesPattern/states/stateGameOver.cpp
+ src/scripts/statesPattern/states/stateGamePaused.cpp
+ src/scripts/statesPattern/states/stateGamePlaying.cpp
+ src/scripts/statesPattern/states/stateGameStarting.cpp
+ src/scripts/statesPattern/states/stateGameWon.cpp
+ src/scripts/statesPattern/states/stateLoadGame.cpp
+ src/scripts/statesPattern/states/stateMainMenu.cpp
+ src/scripts/statesPattern/states/stateSaveGame.cpp
+ src/scripts/mapEntities/collectable.cpp
+ src/scripts/mapEntities/collectables/coin.cpp
+ src/scripts/mapEntities/collectables/powerCoin.cpp
  src/scripts/mapEntities/moving/movingEntity.cpp
  src/scripts/mapEntities/moving/phantom.cpp
  src/scripts/mapEntities/moving/player.cpp
