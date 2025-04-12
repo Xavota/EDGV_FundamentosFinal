@@ -1,9 +1,27 @@
 #pragma once
 
+#define PLATFORM_WIN32   1                  //Windows Platform
+#define PLATFORM_LINUX   2                  //Linux Platform
+#define PLATFORM_OSX     3
+
 #define COMPILER_MSVC    1                  //Visual Studio Compiler
 #define COMPILER_GNUC    2                  //GCC Compiler
 #define COMPILER_INTEL   3                  //Intel Compiler
 #define COMPILER_CLANG   4                  //Clang Compiler
+
+
+/************************************************************************/
+/**
+ * Finds the current platform
+ */
+ /************************************************************************/
+#if defined (__WIN32__) || defined (_WIN32)
+# define PLATFORM PLATFORM_WIN32
+#elif defined (__APPLE_CC__ )
+# define PLATFORM PLATFORM_OSX
+#elif defined (__ORBIS__)
+# define PLATFORM PLATFORM_LINUX
+#endif
 
 
 /************************************************************************/

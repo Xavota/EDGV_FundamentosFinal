@@ -2,8 +2,11 @@
 
 #include "tools/globals.h"
 
+#include "platform/iofile.h"
+
 #include "scene/sceneManager.h"
 #include "scene/scene.h"
+
 
 void FrameworkManager::run(const sf::Vector2u& size, const String& name,
                            const bool windowed)

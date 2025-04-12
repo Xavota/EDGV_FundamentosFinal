@@ -32,3 +32,5 @@ FetchContent_MakeAvailable(SFML)
 
 add_subdirectory(Framework)
 add_subdirectory(Pong)
+add_subdirectory(SpeedMod)
+add_subdirectory(NewMapMod)

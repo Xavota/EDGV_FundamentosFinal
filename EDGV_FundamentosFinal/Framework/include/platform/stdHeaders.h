@@ -23,7 +23,7 @@ using U32 = std::uint32_t;
 using U64 = std::uint64_t;
 
 using Byte = U8;
-using SIZE = std::size_t;
+using ArrSize = std::size_t;
 
 
 using String = std::string;
@@ -54,4 +54,4 @@ using OFStream = std::ofstream;
 using Path = std::filesystem::path;
 
 template<class R, class... Args>
-using FuntionPtr = std::function<R(Args...)>;
+using FunctionPtr = std::function<R(Args...)>;

@@ -15,6 +15,7 @@
 
 void MapBuilder::init(const WString& fileName, SPtr<GameMap> map)
 {
+  std::wcout << L"loading map: " << fileName << std::endl;
   File mapFile(fileName, eOPEN_TYPE::kReadOnly);
 
   U32 width = 0;

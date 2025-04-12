@@ -3,6 +3,7 @@ project(Framework LANGUAGES CXX)
 
 add_library(Framework STATIC
   src/frameworkManager.cpp
+  src/platform/dllDynamics.cpp
   src/platform/iofile.cpp
   src/platform/math.cpp
   src/platform/math/matrix3.cpp
@@ -27,5 +28,7 @@ set_target_properties(Framework PROPERTIES
  CXX_STANDARD_REQUIRED YES
  CXX_EXTENSIONS NO
 )
+
+target_compile_definitions(Framework PRIVATE _DEBUG UNICODE _UNICODE)
 
 # target_compile_features(Framework PRIVATE cxx_std_20)

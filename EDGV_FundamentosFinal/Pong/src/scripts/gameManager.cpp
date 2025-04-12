@@ -19,6 +19,8 @@
 
 #include "scripts/statesPattern/stateMachine.h"
 
+#include "scripts/mapManager.h"
+
 #include "scripts/gameMap.h"
 #include "scripts/mapBuilder.h"
 #include "scripts/mapEntities/moving/player.h"
@@ -32,6 +34,8 @@ void GameManager::start()
   auto& framework = PongFramework::instance();
   auto& fontMan = gl::FontManager::instance();
 
+  auto& mapManager = MapManager::instance();
+
 
   SPtr<Actor> stateMachine = getScene().lock()->addActor("stateMachine").lock();
   m_pStateMachine = stateMachine->addComponent<StateMachine>().lock();
@@ -44,7 +48,7 @@ void GameManager::start()
 
   SPtr<Actor> mapBuilder = getScene().lock()->addActor("mapBuilder").lock();
   SPtr<MapBuilder> mapBuilderComp = mapBuilder->addComponent<MapBuilder>().lock();
-  mapBuilderComp->init(m_sMapFile, m_pGameMap);
+  mapBuilderComp->init(mapManager.m_sMapFile, m_pGameMap);
 
   m_pGameMap->init([this] () {
     std::cout << "Last Coin" << std::endl;

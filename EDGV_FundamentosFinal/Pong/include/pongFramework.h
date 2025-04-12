@@ -30,4 +30,10 @@ class PongFramework : public FrameworkManager {
    * @brief  Destroy function to inherit.
    */
   void onDestroy() override;
+
+ private:
+  /**
+   * @brief  Find and load all the mods in the mods folder.
+   */
+  void loadMods();
 };

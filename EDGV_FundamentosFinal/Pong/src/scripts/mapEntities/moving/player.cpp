@@ -61,8 +61,8 @@ void Player::loadFromFile(File& loadFile)
 }
 
 void Player::init(WPtr<GameMap> map, float speed,
-                  FuntionPtr<void> eatablePhantoms, FuntionPtr<void> died,
-                  FuntionPtr<void> finishedDying)
+                  FunctionPtr<void> eatablePhantoms, FunctionPtr<void> died,
+                  FunctionPtr<void> finishedDying)
 {
   m_pGameMap = map;
   m_fOgSpeed = speed;

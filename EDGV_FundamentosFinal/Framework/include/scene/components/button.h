@@ -33,12 +33,12 @@ class Button : public Component
 
   void update() override;
 
-  FuntionPtr<void> m_fpOnClick;
-  FuntionPtr<void> m_fpOnClickContinue;
-  FuntionPtr<void> m_fpOnClickStops;
-  FuntionPtr<void> m_fpOnMouseEnter;
-  FuntionPtr<void> m_fpOnHovered;
-  FuntionPtr<void> m_fpOnMouseExit;
+  FunctionPtr<void> m_fpOnClick;
+  FunctionPtr<void> m_fpOnClickContinue;
+  FunctionPtr<void> m_fpOnClickStops;
+  FunctionPtr<void> m_fpOnMouseEnter;
+  FunctionPtr<void> m_fpOnHovered;
+  FunctionPtr<void> m_fpOnMouseExit;
 
  private:
   bool m_bMouseOver = false;

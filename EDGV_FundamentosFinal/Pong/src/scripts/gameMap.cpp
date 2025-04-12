@@ -42,7 +42,7 @@ void GameMap::loadFromFile(File& loadFile)
   //       ARCHIVOS DE MAPAS
 }
 
-bool GameMap::init(FuntionPtr<void> collectedAll)
+bool GameMap::init(FunctionPtr<void> collectedAll)
 {
   m_bIsValid = true;
 

@@ -23,7 +23,7 @@ void Actor::init(const String& name, int sceneHashIndex)
   m_sName = name;
   m_iSceneHashIndex = sceneHashIndex;
   if (getTransform().expired()) {
-    SIZE cmpIndex = m_vComponents.size();
+    ArrSize cmpIndex = m_vComponents.size();
     m_vComponents.push_back(MemoryManager::createShared<Transform>());
     m_vComponents[cmpIndex]->init(shared_from_this());
   }

@@ -16,7 +16,7 @@ class Collectable : public Script
    */
   virtual ~Collectable() = default;
 
-  FuntionPtr<void> m_fpCollected;
+  FunctionPtr<void> m_fpCollected;
 
  protected:
   virtual void onCollected(WPtr<Player> player) {}

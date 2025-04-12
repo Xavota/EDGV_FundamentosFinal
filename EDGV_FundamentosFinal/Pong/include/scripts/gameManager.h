@@ -46,7 +46,7 @@ class GameManager : public Script, public EnableSPtrFromThis<GameManager>
   SPtr<Actor> m_pReadyTxt;
   Vector<SPtr<Actor>> m_vVisualLives = {};
 
-  WString m_sMapFile = L"../Pong/resources/baseMap.map";
+  //WString m_sMapFile = L"../Pong/resources/baseMap.map";
 
  private:
   void start() override;

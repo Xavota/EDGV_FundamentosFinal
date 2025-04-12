@@ -1,6 +1,7 @@
 #include "pongFramework.h"
 
 #include <platform/iofile.h>
+#include <platform/dllDynamics.h>
 
 #include <scene/sceneManager.h>
 #include <scene/scene.h>
@@ -11,10 +12,18 @@
 
 #include "scripts/gameManager.h"
 
+#include "scripts/mapManager.h"
+
 
 void PongFramework::onInit()
 {
-  std::cout << "OnInit" << std::endl;
+  //std::cout << "OnInit" << std::endl;
+
+  loadMods();
+
+  if (!MapManager::isStarted()) {
+    MapManager::startUp();
+  }
 
   auto& textureMan = gl::TextureManager::instance();
   auto& fontMan = gl::FontManager::instance();
@@ -22,14 +31,14 @@ void PongFramework::onInit()
   Vector<Path> paths =
    File::getChildPaths(L"../Pong/resources/sprites/", true);
    //File::getChildPaths(L"C:/Develop/Especialidad/Proyectos/EDGV_FundamentosFinal/EDGV_FundamentosFinal/Pong/resources/sprites/", true);
-  std::cout << "Paths count: " << paths.size() << std::endl;
+  std::cout << "Textures count: " << paths.size() << std::endl;
   for (const auto& p : paths) {
     String textureName =
      std::filesystem::relative(p, "../Pong/resources/sprites/").generic_string();
     std::replace(textureName.begin(), textureName.end(), '/', '_');
     textureName = textureName.substr(0, textureName.size() - 4);
 
-    std::cout << textureName << std::endl;
+    std::cout << "Loading texture: " << textureName << std::endl;
 
     textureMan.addTexture(textureName, p.generic_string(), sf::Color::Black);
   }
@@ -37,14 +46,14 @@ void PongFramework::onInit()
   paths.clear();
   paths = File::getChildPaths(L"../Pong/resources/fonts/", true);
    //File::getChildPaths(L"C:/Develop/Especialidad/Proyectos/EDGV_FundamentosFinal/EDGV_FundamentosFinal/Pong/resources/sprites/", true);
-  std::cout << "Paths count: " << paths.size() << std::endl;
+  std::cout << "Fonts count: " << paths.size() << std::endl;
   for (const auto& p : paths) {
     String fontName =
      std::filesystem::relative(p, "../Pong/resources/fonts/").generic_string();
     std::replace(fontName.begin(), fontName.end(), '/', '_');
     fontName = fontName.substr(0, fontName.size() - 4);
 
-    std::cout << fontName << std::endl;
+    std::cout << "Loading font: " << fontName << std::endl;
 
     fontMan.addFont(fontName, p.generic_string());
   }
@@ -111,4 +120,29 @@ void PongFramework::onRender()
 void PongFramework::onDestroy()
 {
 
+}
+
+void PongFramework::loadMods()
+{
+  Vector<Path> paths =
+   File::getChildPaths(L"../mods/", true);
+  std::cout << "Mods count: " << paths.size() << std::endl;
+  for (const auto& p : paths) {
+    String fileExtension = p.extension().generic_string();
+    //std::cout << "File extension: '" << fileExtension << "'" << std::endl;
+    if (fileExtension != ".dll") continue;
+
+    String modName =
+     std::filesystem::relative(p, "../mods/").generic_string();
+    std::replace(modName.begin(), modName.end(), '/', '_');
+    modName = modName.substr(0, modName.size() - 4);
+
+    std::cout << "Loading mod: " << modName << std::endl;
+
+    DLLDynamics modDLL(p.generic_wstring());
+    FunctionPtr<void> initModFnc = modDLL.getFunction("initMod");
+    if (initModFnc) {
+      initModFnc();
+    }
+  }
 }

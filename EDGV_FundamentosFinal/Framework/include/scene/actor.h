@@ -209,7 +209,7 @@ FORCEINLINE WPtr<T> Actor::addComponent()
     loggerMan.consoleLog("CANNOT ADD A TRANSFORM COMPONENT");*/
     return getComponent<T>();
   }
-  SIZE cmpIndex = m_vComponents.size();
+  ArrSize cmpIndex = m_vComponents.size();
   //m_vComponents.push_back(MemoryManager::instance().newPtr<T>());
   m_vComponents.push_back(std::make_shared<T>());
   m_vComponents[cmpIndex]->init(shared_from_this());
@@ -219,7 +219,7 @@ FORCEINLINE WPtr<T> Actor::addComponent()
 template<typename T>
 FORCEINLINE WPtr<T> Actor::getComponent() const
 {
-  SIZE compCount = m_vComponents.size();
+  ArrSize compCount = m_vComponents.size();
   for (U32 i = 0; i != compCount; ++i) {
     if (m_vComponents[i]->getType() == T::CmpType) {
       if (T::CmpType == eCOMPONENT_TYPE::kScript) {

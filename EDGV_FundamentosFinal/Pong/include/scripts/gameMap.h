@@ -62,7 +62,7 @@ class GameMap : public Script
   virtual void saveToFile(File& saveFile);
   virtual void loadFromFile(File& loadFile);
 
-  bool init(FuntionPtr<void> collectedAll);
+  bool init(FunctionPtr<void> collectedAll);
   void restart();
 
   virtual bool neighbourTileIsOfType(const sf::Vector2u origin, U8 dir, U8 type) const;
@@ -91,7 +91,7 @@ class GameMap : public Script
   Map<U32, SPtr<Collectable>> m_mCollectables;
   U32 m_iActiveCollectables = 0;
 
-  FuntionPtr<void> m_fpCollectedAll = nullptr;
+  FunctionPtr<void> m_fpCollectedAll = nullptr;
 
   sf::Vector2u m_wrapUpPosition = {};
   sf::Vector2u m_wrapDownPosition = {};

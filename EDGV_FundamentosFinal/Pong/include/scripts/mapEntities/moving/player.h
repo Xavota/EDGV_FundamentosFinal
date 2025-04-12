@@ -24,8 +24,8 @@ class Player : public MovingEntity
   void loadFromFile(File& loadFile) override;
 
   void init(WPtr<GameMap> map, float speed,
-            FuntionPtr<void> eatablePhantoms, FuntionPtr<void> died,
-            FuntionPtr<void> finishedDying);
+            FunctionPtr<void> eatablePhantoms, FunctionPtr<void> died,
+            FunctionPtr<void> finishedDying);
 
   void collectedCoin();
   void collectedPowerCoin();
@@ -49,9 +49,9 @@ class Player : public MovingEntity
   void update() override;
 
 
-  FuntionPtr<void> m_fpEatablePhantoms;
-  FuntionPtr<void> m_fpDied;
-  FuntionPtr<void> m_fpFinishedDying;
+  FunctionPtr<void> m_fpEatablePhantoms;
+  FunctionPtr<void> m_fpDied;
+  FunctionPtr<void> m_fpFinishedDying;
 
   bool m_bCollectedCoin = false;
   bool m_bCollectedCoinStep = false;
