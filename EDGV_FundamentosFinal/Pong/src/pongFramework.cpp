@@ -122,6 +122,12 @@ void PongFramework::onDestroy()
 
 }
 
+#if PLATFORM == PLATFORM_WIN32
+  String libExtension = ".dll";
+#else
+  String libExtension = ".so";
+#endif
+
 void PongFramework::loadMods()
 {
   Vector<Path> paths =
@@ -130,7 +136,7 @@ void PongFramework::loadMods()
   for (const auto& p : paths) {
     String fileExtension = p.extension().generic_string();
     //std::cout << "File extension: '" << fileExtension << "'" << std::endl;
-    if (fileExtension != ".dll") continue;
+    if (fileExtension != libExtension) continue;
 
     String modName =
      std::filesystem::relative(p, "../mods/").generic_string();
