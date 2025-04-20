@@ -55,7 +55,12 @@ void File::openFile(const WString& path, U8 openFlags)
   }
   
 
+  #if PLATFORM == PLATFORM_WIN32
   m_file.open(path, mode);
+  #else
+  String narrowPath(path.begin(), path.end());
+  m_file.open(narrowPath,  static_cast<std::ios_base::openmode>(mode));
+  #endif
 
   if (!m_file || m_file.fail()) {
     m_file.close();

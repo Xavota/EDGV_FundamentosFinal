@@ -5,6 +5,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #else
+#include <dlfcn.h>
 #endif
 
 DLLDynamics::DLLDynamics(const WString& dllPath)
@@ -25,7 +26,8 @@ DLLDynamics::initialize(const WString& dllPath)
   }
 
 #else
-  void* hGetProcIdDLL = dlopen(dllPath.c_str(), RTLD_LAZY);
+  String narrowDllPath(dllPath.begin(), dllPath.end());
+  void* hGetProcIdDLL = dlopen(narrowDllPath.c_str(), RTLD_LAZY);
   if (!hGetProcIdDLL) {
     std::cout << "Could not load DLL" << std::endl;
     return 1;
@@ -50,7 +52,7 @@ DLLDynamics::getFunction(const String& functName)
   }
 #else
   functionType function = (functionType)dlsym(m_dllInstance, "initPlugin");
-  if (!function()) {
+  if (!function) {
     std::cout << "Could not load function" << std::endl;
     return nullptr;
   }

@@ -1,6 +1,10 @@
 #include "platform/math.h"
 
 #include <iostream>
+#include <cmath>
+
+using  std::pow;
+using std::atan2;
 
 
 float Math::kPI = 3.14159264f;

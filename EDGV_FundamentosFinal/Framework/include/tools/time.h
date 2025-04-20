@@ -75,7 +75,6 @@ namespace gl {
      */
     bool timerExist(const String& name) const;
 
-   private:
     /**
      * @brief  Updates the world time along with all the timers
      * @param    time: time passed since the last update
