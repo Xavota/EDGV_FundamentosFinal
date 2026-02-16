@@ -21,9 +21,9 @@ void PongFramework::onInit()
 
   loadMods();
 
-  if (!MapManager::isStarted()) {
+  /*if (!MapManager::isStarted()) {
     MapManager::startUp();
-  }
+  }*/
 
   auto& textureMan = gl::TextureManager::instance();
   auto& fontMan = gl::FontManager::instance();
@@ -131,7 +131,8 @@ void PongFramework::onDestroy()
 void PongFramework::loadMods()
 {
   Vector<Path> paths =
-   File::getChildPaths(L"../mods/", true);
+   //File::getChildPaths(L"../mods/", true);
+   File::getChildPaths(L"./lib/Debug/", true);
   std::cout << "Mods count: " << paths.size() << std::endl;
   for (const auto& p : paths) {
     String fileExtension = p.extension().generic_string();

@@ -6,6 +6,7 @@ add_executable(Pong
  src/scripts/gameManager.cpp
  src/scripts/gameMap.cpp
  src/scripts/mapBuilder.cpp
+ src/scripts/mapManager.cpp
  src/scripts/mapTilesFactory.cpp
  src/scripts/statesPattern/stateMachine.cpp
  src/scripts/statesPattern/states/stateGameOver.cpp
@@ -38,3 +39,5 @@ target_include_directories(Pong PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_dependencies(Pong Framework)
 target_link_libraries(Pong PRIVATE Framework SFML::Graphics)
+
+target_compile_definitions(Pong PRIVATE PONG_EXPORTS)

@@ -34,7 +34,7 @@ void GameManager::start()
   auto& framework = PongFramework::instance();
   auto& fontMan = gl::FontManager::instance();
 
-  auto& mapManager = MapManager::instance();
+  //auto& mapManager = MapManager::instance();
 
 
   SPtr<Actor> stateMachine = getScene().lock()->addActor("stateMachine").lock();
@@ -48,7 +48,7 @@ void GameManager::start()
 
   SPtr<Actor> mapBuilder = getScene().lock()->addActor("mapBuilder").lock();
   SPtr<MapBuilder> mapBuilderComp = mapBuilder->addComponent<MapBuilder>().lock();
-  mapBuilderComp->init(mapManager.m_sMapFile, m_pGameMap);
+  //mapBuilderComp->init(mapManager.m_sMapFile, m_pGameMap);
 
   m_pGameMap->init([this] () {
     std::cout << "Last Coin" << std::endl;

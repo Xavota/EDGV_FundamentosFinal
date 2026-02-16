@@ -1,22 +1,16 @@
 #include <iostream>
 
-#include "mapManager.h"
+#include "newMapModDefines.h"
 
-#ifdef _WIN32
-  #ifdef NEW_MAP_MOD_DLL_EXPORTS
-    #define NEW_MAP_MOD_DLL_API __declspec(dllexport)
-  #else
-    #define NEW_MAP_MOD_DLL_API __declspec(dllimport)
-  #endif
-#else
-  #define NEW_MAP_MOD_DLL_API __attribute__((visibility("default")))
-#endif
+//#include "newMapManager.h"
 
 extern "C" NEW_MAP_MOD_DLL_API void initMod()
 {
-  MapManager::startUp<NewMapManager>();
+  //MapManager::startUp<NewMapManager>();
+  //MapManager::test = 2;
 
-  if (MapManager::isStarted()) {
-    std::cout << "NewMapMod Loaded" << std::endl;
-  }
+  /*if (MapManager::isStarted()) {
+    std::cout << "MapManager Loaded" << std::endl;
+  }*/
+  std::cout << "NewMapMod Loaded" << std::endl;
 }
